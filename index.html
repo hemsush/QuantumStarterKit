@@ -1,0 +1,1814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quantum Technology — 23OPH971 Study Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --bg:#0a0e1a;
+  --bg-soft:#0d1224;
+  --panel:#121833;
+  --panel-2:#161f44;
+  --line:#28315c;
+  --line-soft:#1b2244;
+  --text:#e9edfb;
+  --muted:#8c96be;
+  --muted-2:#5d6690;
+  --cyan:#4fe0e8;
+  --cyan-dim:#2a8a92;
+  --magenta:#ff5da6;
+  --magenta-dim:#9a3a6b;
+  --amber:#ffc857;
+  --green:#7cffb2;
+  --radius:8px;
+  --font-d:'Space Grotesk',sans-serif;
+  --font-b:'IBM Plex Sans',sans-serif;
+  --font-m:'IBM Plex Mono',monospace;
+  --maxw:1180px;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-b);
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(ellipse 60% 40% at 50% 0%, rgba(79,224,232,0.07), transparent 60%),
+    repeating-linear-gradient(60deg, rgba(79,224,232,0.025) 0px, rgba(79,224,232,0.025) 1px, transparent 1px, transparent 26px),
+    repeating-linear-gradient(120deg, rgba(79,224,232,0.025) 0px, rgba(79,224,232,0.025) 1px, transparent 1px, transparent 26px);
+  background-attachment:fixed;
+}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important;}
+}
+a{color:var(--cyan); text-decoration:none;}
+h1,h2,h3,h4{font-family:var(--font-d); margin:0 0 .4em 0; letter-spacing:-0.01em; color:#fff;}
+p{margin:0 0 1em 0;}
+.muted{color:var(--muted);}
+.eyebrow{
+  font-family:var(--font-m); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--cyan); display:flex; align-items:center; gap:.5em; margin-bottom:.8em;
+}
+.eyebrow::before{content:''; width:7px; height:7px; border-radius:50%; background:var(--cyan); box-shadow:0 0 8px var(--cyan); flex:none;}
+.badge{
+  font-family:var(--font-m); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase;
+  border:1px solid var(--line); color:var(--muted); padding:.25em .65em; border-radius:999px; display:inline-flex; gap:.4em; align-items:center;
+}
+.badge.b-cyan{border-color:var(--cyan-dim); color:var(--cyan);}
+.badge.b-magenta{border-color:var(--magenta-dim); color:var(--magenta);}
+
+/* ============ PROGRESS BAR ============ */
+#progress{
+  position:fixed; top:0; left:0; height:3px; width:0%; z-index:200;
+  background:linear-gradient(90deg, var(--cyan), var(--magenta));
+  box-shadow:0 0 10px rgba(79,224,232,.6);
+  transition:width .08s linear;
+}
+
+/* ============ TOPBAR ============ */
+header.topbar{
+  position:fixed; top:0; left:0; right:0; height:56px; z-index:150;
+  background:rgba(10,14,26,0.85); backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line-soft);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 1.2rem;
+}
+.brand{display:flex; align-items:center; gap:.6rem; font-family:var(--font-m); font-size:.8rem; color:var(--muted);}
+.brand b{color:var(--text); font-family:var(--font-d); font-size:.95rem; letter-spacing:.01em;}
+.brand .dot{width:8px;height:8px;border-radius:50%;background:var(--cyan); box-shadow:0 0 8px var(--cyan);}
+#navToggle{
+  display:none; background:none; border:1px solid var(--line); color:var(--text);
+  width:36px; height:36px; border-radius:6px; cursor:pointer; font-size:1rem;
+}
+
+/* ============ SIDEBAR (desktop) ============ */
+nav.sidebar{
+  position:fixed; top:56px; left:0; width:240px; height:calc(100vh - 56px);
+  border-right:1px solid var(--line-soft); padding:1.6rem 0 1.6rem 0;
+  overflow-y:auto; z-index:120; background:rgba(10,14,26,0.5);
+}
+.wire{
+  position:absolute; left:27px; top:0; bottom:0; width:2px;
+  background:linear-gradient(to bottom, var(--line) 0%, var(--line) 100%);
+}
+nav.sidebar ul{list-style:none; margin:0; padding:0; position:relative;}
+nav.sidebar a{
+  display:flex; align-items:center; gap:.8rem; padding:.55rem 1.4rem;
+  font-family:var(--font-m); font-size:.78rem; color:var(--muted);
+  position:relative; transition:color .2s;
+}
+nav.sidebar a .node{
+  width:11px; height:11px; border-radius:50%; background:var(--bg); border:2px solid var(--line);
+  flex:none; z-index:2; transition:.25s;
+}
+nav.sidebar a:hover{color:var(--text);}
+nav.sidebar a.active{color:var(--cyan);}
+nav.sidebar a.active .node{border-color:var(--cyan); background:var(--cyan); box-shadow:0 0 10px var(--cyan);}
+nav.sidebar .navsec{margin-top:1rem; padding-left:1.4rem; font-size:.65rem; color:var(--muted-2); letter-spacing:.1em;}
+
+.mobile-tabs{display:none;}
+
+/* ============ LAYOUT ============ */
+main{margin-left:240px; padding-top:56px;}
+.wrap{max-width:var(--maxw); margin:0 auto; padding:0 2rem;}
+
+/* ============ HERO ============ */
+section.hero{
+  min-height:92vh; display:flex; align-items:center; padding:3rem 0 2rem;
+  position:relative; overflow:hidden;
+}
+.hero-grid{display:grid; grid-template-columns:1.1fr 1fr; gap:2rem; align-items:center; width:100%;}
+.hero h1{font-size:clamp(2.4rem,5.2vw,4.4rem); line-height:1.02; font-weight:700;}
+.hero h1 span{color:var(--cyan);}
+.hero .tagline{font-size:1.05rem; color:var(--muted); max-width:480px; margin-top:1rem;}
+.hero-meta{display:flex; gap:.6rem; flex-wrap:wrap; margin-top:1.6rem;}
+.scrollcue{margin-top:2.6rem; font-family:var(--font-m); font-size:.72rem; color:var(--muted-2); letter-spacing:.1em; display:flex; align-items:center; gap:.5rem;}
+.scrollcue .arrow{display:inline-block; animation:bob 1.8s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0);} 50%{transform:translateY(5px);}}
+.hero-sphere-wrap{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.8rem;}
+.hero-sphere-cap{font-family:var(--font-m); font-size:.7rem; color:var(--muted-2); letter-spacing:.08em; text-align:center;}
+
+/* ============ SECTIONS / UNITS ============ */
+section.unit{padding:5rem 0; border-top:1px solid var(--line-soft); position:relative;}
+.unit-head{display:flex; align-items:baseline; gap:1.2rem; margin-bottom:2.6rem;}
+.unit-num{font-family:var(--font-d); font-size:3.4rem; font-weight:700; color:var(--line); line-height:1;}
+.unit-headtext .eyebrow{margin-bottom:.3em;}
+.unit-headtext h2{font-size:clamp(1.6rem,3.4vw,2.3rem);}
+.unit-intro{color:var(--muted); max-width:760px; margin-bottom:2.4rem; font-size:1.02rem;}
+
+h3.subhead{font-size:1.2rem; margin-top:0; display:flex; align-items:center; gap:.6rem;}
+h3.subhead .tag{font-family:var(--font-m); font-size:.62rem; color:var(--bg); background:var(--cyan); padding:.15em .5em; border-radius:4px; letter-spacing:.06em;}
+
+.block{margin-bottom:3rem;}
+.panel{
+  background:linear-gradient(180deg, var(--panel), var(--bg-soft));
+  border:1px solid var(--line-soft); border-radius:var(--radius); padding:1.6rem;
+}
+.grid-2{display:grid; grid-template-columns:1fr 1fr; gap:1.4rem;}
+.grid-3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.2rem;}
+.grid-4{display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:1rem;}
+@media (max-width:900px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr;}}
+
+ul.bullets{padding-left:1.2rem; color:var(--muted); margin:0;}
+ul.bullets li{margin-bottom:.5em;}
+ul.bullets li::marker{color:var(--cyan);}
+
+/* ============ BUTTONS / CONTROLS ============ */
+.btn{
+  font-family:var(--font-m); font-size:.74rem; letter-spacing:.06em; text-transform:uppercase;
+  background:transparent; border:1px solid var(--cyan-dim); color:var(--cyan);
+  padding:.55em 1.1em; border-radius:6px; cursor:pointer; transition:.2s; display:inline-flex; align-items:center; gap:.5em;
+}
+.btn:hover{background:rgba(79,224,232,.1); border-color:var(--cyan);}
+.btn:disabled{opacity:.35; cursor:not-allowed;}
+.btn.ghost{border-color:var(--line); color:var(--muted);}
+.btn.ghost:hover{border-color:var(--muted-2); color:var(--text); background:rgba(255,255,255,.03);}
+.btn-row{display:flex; gap:.6rem; flex-wrap:wrap; margin-top:1rem;}
+
+.slider-row{margin-bottom:1.1rem;}
+.slider-row label{display:flex; justify-content:space-between; font-family:var(--font-m); font-size:.72rem; color:var(--muted); margin-bottom:.4em; letter-spacing:.04em;}
+.slider-row label b{color:var(--cyan); font-weight:500;}
+input[type=range]{width:100%; -webkit-appearance:none; height:3px; background:var(--line); border-radius:3px; outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:15px; height:15px; border-radius:50%; background:var(--bg); border:2px solid var(--cyan); cursor:pointer; box-shadow:0 0 8px rgba(79,224,232,.5);}
+input[type=range]::-moz-range-thumb{width:15px; height:15px; border-radius:50%; background:var(--bg); border:2px solid var(--cyan); cursor:pointer;}
+
+/* ============ BLOCH SPHERE ============ */
+.bloch-svg{display:block; margin:0 auto;}
+.bloch-sphere-circle{fill:rgba(79,224,232,.03); stroke:var(--line); stroke-width:1;}
+.bloch-equator{fill:none; stroke:var(--line); stroke-width:1; stroke-dasharray:3 3;}
+.bloch-axis{stroke:var(--line-soft); stroke-width:1;}
+.bloch-vec{stroke:var(--cyan); stroke-width:2; filter:drop-shadow(0 0 4px rgba(79,224,232,.7));}
+.bloch-tip{fill:var(--cyan); filter:drop-shadow(0 0 5px rgba(79,224,232,.9));}
+.bloch-label{font-family:var(--font-m); font-size:9px; fill:var(--muted-2);}
+
+/* ============ GATE CARDS ============ */
+.gate-card{background:var(--panel); border:1px solid var(--line-soft); border-radius:var(--radius); padding:1.2rem; text-align:center;}
+.gate-card .gate-sym{font-family:var(--font-d); font-size:1.5rem; font-weight:700; color:var(--cyan); border:1px solid var(--cyan-dim); width:42px; height:42px; border-radius:8px; display:flex; align-items:center; justify-content:center; margin:0 auto .6rem;}
+.gate-card .matrix{font-family:var(--font-m); font-size:.72rem; color:var(--muted); margin:.6rem 0;}
+.gate-card h4{font-size:.95rem; margin-bottom:.2rem;}
+.gate-card .desc{font-size:.82rem; color:var(--muted); min-height:3.2em;}
+.qecbit{width:46px;height:46px;border-radius:8px;border:1px solid var(--line-soft);background:var(--panel);display:flex;align-items:center;justify-content:center;font-family:var(--font-m);font-size:1.2rem;color:var(--cyan);}
+
+/* ============ BAR CHARTS ============ */
+.barchart{display:flex; align-items:flex-end; gap:.8rem; height:140px; padding:0 .5rem; border-bottom:1px solid var(--line-soft);}
+.bar-col{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; position:relative;}
+.bar-col .bar{width:60%; background:linear-gradient(180deg, var(--cyan), var(--cyan-dim)); border-radius:4px 4px 0 0; transition:height .5s cubic-bezier(.2,.9,.2,1), background .3s; height:2%;}
+.bar-col .bar.neg{background:linear-gradient(180deg, var(--magenta-dim), var(--magenta));}
+.bar-col .bar.hit{background:linear-gradient(180deg, var(--amber), #b8862e); box-shadow:0 0 12px rgba(255,200,87,.6);}
+.bar-col .val{font-family:var(--font-m); font-size:.68rem; color:var(--muted); margin-bottom:.3em;}
+.bar-col .lab{font-family:var(--font-m); font-size:.68rem; color:var(--muted-2); margin-top:.5em;}
+
+/* ============ CODE BLOCKS ============ */
+.code-block{background:#080b14; border:1px solid var(--line-soft); border-left:3px solid var(--green); border-radius:6px; margin:1.2rem 0; overflow:hidden;}
+.code-head{display:flex; justify-content:space-between; align-items:center; padding:.55rem 1rem; border-bottom:1px solid var(--line-soft); background:rgba(255,255,255,.015);}
+.code-head span{font-family:var(--font-m); font-size:.68rem; color:var(--muted-2); letter-spacing:.06em;}
+.copy-btn{font-family:var(--font-m); font-size:.65rem; color:var(--muted); background:none; border:1px solid var(--line); padding:.25em .6em; border-radius:4px; cursor:pointer; letter-spacing:.04em;}
+.copy-btn:hover{color:var(--green); border-color:var(--green);}
+.code-block pre{margin:0; padding:1rem 1.2rem; overflow-x:auto; font-family:var(--font-m); font-size:.82rem; line-height:1.65;}
+.tok-kw{color:#ff7ad9;} .tok-str{color:var(--green);} .tok-com{color:var(--muted-2); font-style:italic;} .tok-fn{color:var(--cyan);} .tok-num{color:var(--amber);}
+
+/* ============ FLASHCARDS ============ */
+.flip-card{background:transparent; height:140px; perspective:900px; cursor:pointer;}
+.flip-inner{position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;}
+.flip-card.flipped .flip-inner{transform:rotateY(180deg);}
+.flip-face{position:absolute; inset:0; backface-visibility:hidden; border-radius:var(--radius); border:1px solid var(--line-soft); display:flex; align-items:center; justify-content:center; text-align:center; padding:1rem;}
+.flip-front{background:var(--panel); font-family:var(--font-d); font-size:1.05rem; color:var(--text);}
+.flip-back{background:var(--panel-2); transform:rotateY(180deg); font-size:.82rem; color:var(--muted);}
+
+/* ============ SEQUENCE / TABLE ============ */
+table.seq{width:100%; border-collapse:collapse; font-family:var(--font-m); font-size:.78rem;}
+table.seq th{text-align:left; color:var(--muted-2); font-weight:500; padding:.5em .6em; border-bottom:1px solid var(--line);}
+table.seq td{padding:.5em .6em; border-bottom:1px solid var(--line-soft); color:var(--muted); opacity:0; transition:opacity .3s;}
+table.seq tr.show td{opacity:1;}
+table.seq td.keep{color:var(--cyan);}
+
+/* ============ FOOTER ============ */
+footer{padding:3rem 0 4rem; border-top:1px solid var(--line-soft); text-align:center; color:var(--muted-2); font-family:var(--font-m); font-size:.78rem;}
+footer a{color:var(--muted);}
+.back-top{display:inline-block; margin-top:1rem;}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:900px){
+  nav.sidebar{display:none;}
+  main{margin-left:0;}
+  #navToggle{display:block;}
+  .mobile-tabs{
+    display:flex; position:fixed; top:56px; left:0; right:0; z-index:140; background:var(--bg-soft);
+    border-bottom:1px solid var(--line-soft); overflow-x:auto; padding:.6rem 1rem; gap:.6rem; white-space:nowrap;
+  }
+  .mobile-tabs a{font-family:var(--font-m); font-size:.7rem; color:var(--muted); border:1px solid var(--line); padding:.4em .8em; border-radius:999px;}
+  .mobile-tabs a.active{color:var(--cyan); border-color:var(--cyan-dim);}
+  main{padding-top:104px;}
+  .hero-grid{grid-template-columns:1fr;}
+  .hero-sphere-wrap{order:-1;}
+}
+@keyframes pulseRing{0%{r:14; opacity:1;}100%{r:28; opacity:0;}}
+.pulse-ring{animation:pulseRing 2s ease-out infinite; transform-origin:50px 40px;}
+@keyframes photonMove{0%{cx:15;}100%{cx:85;}}
+.photon-dot{animation:photonMove 2.2s ease-in-out infinite alternate;}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<header class="topbar">
+  <div class="brand"><span class="dot"></span><b>QUANTUM TECHNOLOGY</b><span>&nbsp;· 23OPH971</span></div>
+  <button id="navToggle" aria-label="Toggle navigation">≡</button>
+</header>
+
+<nav class="sidebar" id="sidebar">
+  <div class="wire"></div>
+  <ul id="navlist">
+    <li><a href="#hero" data-sec="hero"><span class="node"></span>Start</a></li>
+    <li><a href="#unit1" data-sec="unit1"><span class="node"></span>Unit I — Foundations</a></li>
+    <li><a href="#unit2" data-sec="unit2"><span class="node"></span>Unit II — Quantum Mechanics</a></li>
+    <li><a href="#unit3" data-sec="unit3"><span class="node"></span>Unit III — Gates &amp; Circuits</a></li>
+    <li><a href="#unit4" data-sec="unit4"><span class="node"></span>Unit IV — Computation</a></li>
+    <li><a href="#unit5" data-sec="unit5"><span class="node"></span>Unit V — Applications</a></li>
+    <li><a href="#review" data-sec="review"><span class="node"></span>Review &amp; Glossary</a></li>
+  </ul>
+</nav>
+
+<div class="mobile-tabs" id="mobileTabs">
+  <a href="#hero" data-sec="hero">Start</a>
+  <a href="#unit1" data-sec="unit1">Unit I</a>
+  <a href="#unit2" data-sec="unit2">Unit II</a>
+  <a href="#unit3" data-sec="unit3">Unit III</a>
+  <a href="#unit4" data-sec="unit4">Unit IV</a>
+  <a href="#unit5" data-sec="unit5">Unit V</a>
+  <a href="#review" data-sec="review">Review</a>
+</div>
+
+<main>
+<div class="wrap">
+
+<section class="hero" id="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="eyebrow">23OPH971 · L-T-P-C 3-0-0-3</div>
+      <h1>Quantum<br><span>Technology</span></h1>
+      <p class="tagline">From classical bits to qubits, gates, circuits, and the algorithms that give quantum computers their edge — illustrated, animated, and backed by runnable Qiskit code.</p>
+      <div class="hero-meta">
+        <span class="badge b-cyan">5 Units · 45 Hours</span>
+        <span class="badge b-magenta">Interactive Bloch Sphere</span>
+        <span class="badge">Qiskit Code Included</span>
+        <span class="badge b-cyan">+ Error Correction &amp; Teleportation</span>
+      </div>
+      <div class="scrollcue"><span class="arrow">↓</span> SCROLL TO BEGIN — UNIT I</div>
+    </div>
+    <div class="hero-sphere-wrap">
+      <svg id="heroBloch" class="bloch-svg" viewBox="0 0 200 200" width="320" height="320"></svg>
+      <div class="hero-sphere-cap">|ψ⟩ = α|0⟩ + β|1⟩ — A QUBIT PRECESSING ON THE BLOCH SPHERE</div>
+    </div>
+  </div>
+</section>
+
+<section class="unit" id="unit1">
+  <div class="unit-head">
+    <div class="unit-num">I</div>
+    <div class="unit-headtext">
+      <div class="eyebrow">9 Hours</div>
+      <h2>Foundations of Computing &amp; Quantum Concepts</h2>
+    </div>
+  </div>
+  <p class="unit-intro">Before talking about qubits, it helps to be precise about what a classical computer actually does — and where it runs out of road. This unit sets that baseline, then opens the door to why quantum computing exists at all.</p>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">01</span> From Switches to Bits</h3>
+    <div class="grid-2">
+      <div class="panel">
+        <p>Every classical computer, no matter how advanced, is built from <b>bits</b> — a unit of information that can be in exactly one of two states, <code>0</code> or <code>1</code>. Physically, a bit is usually a tiny switch (a transistor) that is either "off" or "on".</p>
+        <p class="muted">Click the switch below — notice it can only ever be in one state at a time. That single constraint is the entire foundation of classical computing.</p>
+        <div class="btn-row"><button class="btn" id="bitToggleBtn">Flip the bit</button></div>
+      </div>
+      <div class="panel" style="display:flex; align-items:center; justify-content:center;">
+        <svg viewBox="0 0 220 140" width="100%" height="160">
+          <rect x="20" y="40" width="180" height="60" rx="30" fill="none" stroke="#28315c" stroke-width="2"/>
+          <circle id="bitKnob" cx="50" cy="70" r="24" fill="#4fe0e8" filter="drop-shadow(0 0 8px rgba(79,224,232,.7))"/>
+          <text id="bitLabel" x="110" y="125" text-anchor="middle" font-family="IBM Plex Mono" font-size="14" fill="#8c96be">STATE = 0</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">02</span> Logic Gates &amp; Binary Operations</h3>
+    <p class="muted">Bits become useful once you combine them with <b>logic gates</b> — small circuits that take one or two bits in and produce a bit out, according to a fixed rule. Toggle the inputs below and watch the output update live.</p>
+    <div class="grid-3">
+      <div class="panel" data-gate="AND">
+        <h4 style="font-family:var(--font-d); margin-bottom:.6rem;">AND</h4>
+        <div class="btn-row">
+          <button class="btn ghost gbit" data-bit="a">A = 0</button>
+          <button class="btn ghost gbit" data-bit="b">B = 0</button>
+        </div>
+        <p style="margin-top:1rem; font-family:var(--font-m); font-size:1.4rem;">OUT = <span class="gout" style="color:var(--cyan);">0</span></p>
+        <p class="muted" style="font-size:.82rem;">Output is 1 only when <i>both</i> inputs are 1.</p>
+      </div>
+      <div class="panel" data-gate="OR">
+        <h4 style="font-family:var(--font-d); margin-bottom:.6rem;">OR</h4>
+        <div class="btn-row">
+          <button class="btn ghost gbit" data-bit="a">A = 0</button>
+          <button class="btn ghost gbit" data-bit="b">B = 0</button>
+        </div>
+        <p style="margin-top:1rem; font-family:var(--font-m); font-size:1.4rem;">OUT = <span class="gout" style="color:var(--cyan);">0</span></p>
+        <p class="muted" style="font-size:.82rem;">Output is 1 when <i>at least one</i> input is 1.</p>
+      </div>
+      <div class="panel" data-gate="XOR">
+        <h4 style="font-family:var(--font-d); margin-bottom:.6rem;">XOR</h4>
+        <div class="btn-row">
+          <button class="btn ghost gbit" data-bit="a">A = 0</button>
+          <button class="btn ghost gbit" data-bit="b">B = 0</button>
+        </div>
+        <p style="margin-top:1rem; font-family:var(--font-m); font-size:1.4rem;">OUT = <span class="gout" style="color:var(--cyan);">0</span></p>
+        <p class="muted" style="font-size:.82rem;">Output is 1 when the inputs <i>differ</i>.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">03</span> Composing Gates: The Half-Adder</h3>
+    <p class="muted">A single gate is limited, but chaining gates together builds arbitrarily complex logic. A <b>half-adder</b> adds two one-bit numbers using exactly the two gates you just played with: XOR computes the <b>sum</b> bit, AND computes the <b>carry</b> bit. This same idea — small fixed components, wired together — is exactly how billions of transistors become a CPU, and exactly how a handful of quantum gates become a quantum circuit in Unit III.</p>
+    <div class="panel">
+      <div class="btn-row"><button class="btn ghost" id="haToggleA">A = 0</button><button class="btn ghost" id="haToggleB">B = 0</button></div>
+      <p style="margin-top:1rem; font-family:var(--font-m); font-size:1.1rem;">SUM (A⊕B) = <span id="haSum" style="color:var(--cyan);">0</span> &nbsp;&nbsp; CARRY (A·B) = <span id="haCarry" style="color:var(--cyan);">0</span></p>
+      <p class="muted" style="font-size:.82rem;">Try A=1, B=1 — sum rolls over to 0 and carry becomes 1, exactly like 1+1=10 in binary.</p>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">04</span> Moore's Law — and Its Wall</h3>
+    <p class="muted">For fifty years, engineers doubled the number of transistors on a chip roughly every two years (<b>Moore's Law</b>), making classical computers exponentially faster. That trend is now hitting physical limits.</p>
+    <div class="panel">
+      <svg viewBox="0 0 700 260" width="100%" height="260" id="mooreChart">
+        <line x1="50" y1="20" x2="50" y2="220" stroke="#28315c"/>
+        <line x1="50" y1="220" x2="670" y2="220" stroke="#28315c"/>
+        <text x="20" y="20" font-family="IBM Plex Mono" font-size="10" fill="#5d6690">transistors</text>
+        <text x="600" y="240" font-family="IBM Plex Mono" font-size="10" fill="#5d6690">year →</text>
+        <path id="moorePath" d="M50,210 " fill="none" stroke="#4fe0e8" stroke-width="2.5"/>
+        <rect x="540" y="20" width="130" height="200" fill="rgba(255,93,166,.06)" stroke="none"/>
+        <line x1="540" y1="20" x2="540" y2="220" stroke="#ff5da6" stroke-width="1.5" stroke-dasharray="4 4"/>
+        <text x="548" y="36" font-family="IBM Plex Mono" font-size="10" fill="#ff5da6">the physical wall</text>
+        <text x="548" y="50" font-family="IBM Plex Mono" font-size="9" fill="#ff5da6">heat · leakage · tunneling</text>
+      </svg>
+      <p class="muted" style="font-size:.88rem; margin-top:.8rem;">As transistors shrink toward a few nanometres, they run into real physical effects — heat that can't be dissipated fast enough, current that leaks across "off" switches, and electrons that <b>quantum tunnel</b> straight through barriers that should stop them. Ironically, the same quantum effects that <i>break</i> classical transistors are exactly what a quantum computer is designed to exploit.</p>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">05</span> Enter Quantum Computing</h3>
+    <div class="panel">
+      <p>A quantum computer is <b>not</b> a faster version of your laptop. It's a fundamentally different kind of machine that stores and processes information using <b>superposition</b> and <b>entanglement</b> — phenomena with no classical counterpart. For most everyday tasks (browsing, spreadsheets, video) it offers no advantage at all.</p>
+      <p class="muted">Where it shines is a narrow but important set of problems — simulating molecules, breaking certain codes, searching unstructured data, optimisation — where the quantum approach scales fundamentally better than any classical algorithm we know. Think of it as a specialised <b>co-processor</b>, not a replacement.</p>
+    </div>
+  </div>
+</section>
+
+<section class="unit" id="unit2">
+  <div class="unit-head">
+    <div class="unit-num">II</div>
+    <div class="unit-headtext">
+      <div class="eyebrow">9 Hours</div>
+      <h2>Fundamentals of Quantum Mechanics for Computing</h2>
+    </div>
+  </div>
+  <p class="unit-intro">This is where the qubit is born. We'll build up the Bloch sphere — the single picture you'll use for the rest of the course to reason about one qubit at a time.</p>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">01</span> The Qubit</h3>
+    <div class="grid-2">
+      <div class="panel">
+        <p>A classical bit is 0 <i>or</i> 1. A <b>qubit</b> is described by a state</p>
+        <p style="font-family:var(--font-m); font-size:1.1rem; color:var(--cyan); text-align:center; margin:1rem 0;">|ψ⟩ = α|0⟩ + β|1⟩</p>
+        <p class="muted">where α and β are complex numbers called <b>amplitudes</b>, satisfying |α|² + |β|² = 1. Squaring an amplitude gives the <i>probability</i> of measuring that outcome — |α|² is the chance of getting 0, |β|² the chance of getting 1.</p>
+        <p class="muted">Drag the sliders on the right to place the qubit anywhere on the Bloch sphere, and watch the measurement probabilities update.</p>
+      </div>
+      <div class="panel">
+        <svg id="u2Bloch" class="bloch-svg" viewBox="0 0 200 200" width="220" height="220"></svg>
+        <div class="slider-row">
+          <label>θ (theta — tilt from |0⟩) <b id="thetaVal">0°</b></label>
+          <input type="range" id="thetaSlider" min="0" max="180" value="0">
+        </div>
+        <div class="slider-row">
+          <label>φ (phi — phase angle) <b id="phiVal">0°</b></label>
+          <input type="range" id="phiSlider" min="0" max="360" value="0">
+        </div>
+        <div class="barchart" style="height:80px;">
+          <div class="bar-col"><div class="val" id="p0val">1.00</div><div class="bar" id="p0bar" style="height:100%;"></div><div class="lab">P(0)</div></div>
+          <div class="bar-col"><div class="val" id="p1val">0.00</div><div class="bar" id="p1bar" style="height:2%;"></div><div class="lab">P(1)</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-head"><span>superposition.py</span><button class="copy-btn">Copy</button></div>
+      <pre><span class="tok-kw">from</span> qiskit <span class="tok-kw">import</span> QuantumCircuit
+<span class="tok-kw">from</span> qiskit.quantum_info <span class="tok-kw">import</span> Statevector
+
+qc = QuantumCircuit(<span class="tok-num">1</span>)
+qc.h(<span class="tok-num">0</span>)                       <span class="tok-com"># |0> -> (|0> + |1>) / sqrt(2)</span>
+
+state = Statevector.from_instruction(qc)
+<span class="tok-fn">print</span>(state)                  <span class="tok-com"># [0.707+0j, 0.707+0j]</span>
+<span class="tok-fn">print</span>(state.probabilities())  <span class="tok-com"># [0.5, 0.5]</span></pre>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">02</span> Superposition, Properly Understood</h3>
+    <div class="panel">
+      <p class="muted">A common but misleading metaphor is "a coin spinning in the air, both heads and tails at once." A qubit in superposition isn't secretly flickering between 0 and 1 — it has one single, definite, well-defined state that simply isn't 0 or 1. It only becomes 0 <i>or</i> 1 the moment you measure it. Before that, the amplitudes α and β are both real, both present, and both used by the computation.</p>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">03</span> Entanglement</h3>
+    <p class="muted">Two (or more) qubits can be placed in a joint state where they can no longer be described independently. Measuring one instantly tells you the outcome of the other — even though no signal travelled between them. Click below to "measure" an entangled pair.</p>
+    <div class="panel" style="text-align:center;">
+      <div style="display:flex; justify-content:center; gap:3rem; flex-wrap:wrap;">
+        <div><svg id="entA" class="bloch-svg" viewBox="0 0 200 200" width="160" height="160"></svg><div class="hero-sphere-cap">QUBIT A</div></div>
+        <div><svg id="entB" class="bloch-svg" viewBox="0 0 200 200" width="160" height="160"></svg><div class="hero-sphere-cap">QUBIT B</div></div>
+      </div>
+      <p class="muted" style="margin-top:1rem; font-family:var(--font-m); font-size:.85rem;" id="entResult">Both qubits are in superposition — undetermined until measured.</p>
+      <div class="btn-row" style="justify-content:center;"><button class="btn" id="entMeasureBtn">Measure the entangled pair</button><button class="btn ghost" id="entResetBtn">Reset</button></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">04</span> Classical Bit vs Qubit</h3>
+    <div class="panel">
+      <table class="seq" style="font-size:.85rem;">
+        <tr><th>Property</th><th>Classical bit</th><th>Qubit</th></tr>
+        <tr class="show"><td>Possible states</td><td>Exactly 0 or 1</td><td>Any superposition α|0⟩+β|1⟩</td></tr>
+        <tr class="show"><td>Reading the value</td><td>Reveals it, unchanged</td><td>Collapses it to 0 or 1</td></tr>
+        <tr class="show"><td>Combining n of them</td><td>n bits → n states</td><td>n qubits → 2ⁿ amplitudes</td></tr>
+        <tr class="show"><td>Can be linked?</td><td>No fundamental link</td><td>Can be entangled</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">05</span> Wave–Particle Duality &amp; Interference</h3>
+    <p class="muted">Quantum objects behave like waves that can overlap and interfere — constructively (amplifying) or destructively (cancelling) — even though they're detected as discrete particles. This is the same interference that quantum algorithms exploit to amplify correct answers and cancel out wrong ones, as you'll see in Grover's algorithm later.</p>
+    <div class="panel" style="display:flex; justify-content:center;">
+      <svg id="waveSvg" viewBox="0 0 600 200" width="100%" height="200" style="max-width:600px;"></svg>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">06</span> Multi-Qubit Systems &amp; the No-Cloning Theorem</h3>
+    <div class="grid-2">
+      <div class="panel">
+        <p>A single qubit needs 2 amplitudes to describe it. Put <i>n</i> qubits together and the joint state needs <b>2<sup>n</sup></b> amplitudes — one for every possible bit string of length n. Three qubits → 8 amplitudes; ten qubits → 1024; fifty qubits → more numbers than there are atoms in a grain of sand.</p>
+        <p style="font-family:var(--font-m); font-size:1rem; color:var(--cyan); text-align:center; margin:1rem 0;">|ψ⟩ = Σ c<sub>i</sub> |i⟩ &nbsp;&nbsp; (i = 0 … 2<sup>n</sup>−1)</p>
+        <p class="muted">This is exactly what makes simulating quantum systems on a classical computer so hard — and it's the resource a quantum computer manipulates directly. Drag the slider to see how fast it grows.</p>
+        <div class="slider-row" style="margin-top:1.4rem;">
+          <label>Number of qubits, n <b id="nqVal">1</b></label>
+          <input type="range" id="nqSlider" min="1" max="50" value="1">
+        </div>
+        <p class="muted" style="font-family:var(--font-m); font-size:.95rem; text-align:center;" id="nqAmp">2<sup>1</sup> = 2 amplitudes</p>
+        <div class="barchart" style="height:70px;"><div class="bar-col"><div class="bar" id="nqBar" style="height:2%;"></div></div></div>
+      </div>
+      <div class="panel">
+        <h4 style="font-size:1rem;">The No-Cloning Theorem</h4>
+        <p class="muted">You cannot build a machine that copies an arbitrary unknown quantum state perfectly — doing so would violate the linearity of quantum mechanics. This isn't an engineering limitation; it's a theorem.</p>
+        <p class="muted">It's also why quantum cryptography (Unit V) works at all: an eavesdropper can't just "photocopy" a qubit in transit and measure the copy later without disturbing the original.</p>
+        <h4 style="font-size:1rem; margin-top:1.2rem;">Tensor Products, Concretely</h4>
+        <p class="muted" style="font-family:var(--font-m); font-size:.82rem;">|0⟩⊗|0⟩ = |00⟩ &nbsp;|0⟩⊗|1⟩ = |01⟩<br>|1⟩⊗|0⟩ = |10⟩ &nbsp;|1⟩⊗|1⟩ = |11⟩</p>
+        <p class="muted">Two qubits in superposition combine into a 4-dimensional space, not just 2+2 — this is where quantum computing's "exponential workspace" actually comes from.</p>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:1rem;">
+      <h4 style="font-size:1rem;">Why an unknown state cannot be copied</h4>
+      <p class="muted">Suppose a perfect copying operation U could copy both basis states: U|0⟩|0⟩=|0⟩|0⟩ and U|1⟩|0⟩=|1⟩|1⟩. Quantum operations are linear, so applying the same operation to |+⟩=(|0⟩+|1⟩)/√2 must give:</p>
+      <div class="matrix" style="margin:.75rem 0;">U|+⟩|0⟩ = (|00⟩+|11⟩)/√2</div>
+      <p class="muted">But two genuine copies would be |+⟩|+⟩=(|00⟩+|01⟩+|10⟩+|11⟩)/2. The results differ. CNOT copies a basis value but entangles a superposition. The restriction applies to an arbitrary unknown state; orthogonal states can still be distinguished and copied.</p>
+    </div>
+    <div class="code-block">
+      <div class="code-head"><span>multi_qubit_state.py</span><button class="copy-btn">Copy</button></div>
+      <pre><span class="tok-kw">from</span> qiskit <span class="tok-kw">import</span> QuantumCircuit
+<span class="tok-kw">from</span> qiskit.quantum_info <span class="tok-kw">import</span> Statevector
+
+<span class="tok-com"># GHZ state on 3 qubits: (|000> + |111>) / sqrt(2)</span>
+qc = QuantumCircuit(<span class="tok-num">3</span>)
+qc.h(<span class="tok-num">0</span>)
+qc.cx(<span class="tok-num">0</span>, <span class="tok-num">1</span>)
+qc.cx(<span class="tok-num">1</span>, <span class="tok-num">2</span>)
+
+state = Statevector.from_instruction(qc)
+<span class="tok-fn">print</span>(state.probabilities_dict())  <span class="tok-com"># {'000': 0.5, '111': 0.5}</span>
+<span class="tok-fn">print</span>(<span class="tok-fn">len</span>(state.data))            <span class="tok-com"># 2**3 = 8 amplitudes total</span></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-head"><span>no_cloning_demo.py</span><button class="copy-btn">Copy</button></div>
+      <pre><span class="tok-kw">import</span> numpy <span class="tok-kw">as</span> np
+<span class="tok-kw">from</span> qiskit <span class="tok-kw">import</span> QuantumCircuit
+<span class="tok-kw">from</span> qiskit.quantum_info <span class="tok-kw">import</span> Statevector, state_fidelity
+
+attempt = QuantumCircuit(<span class="tok-num">2</span>)
+attempt.h(<span class="tok-num">0</span>)       <span class="tok-com"># the state to be copied is |+></span>
+attempt.cx(<span class="tok-num">0</span>, <span class="tok-num">1</span>)   <span class="tok-com"># CNOT is the natural copying attempt</span>
+actual = Statevector.from_instruction(attempt)
+
+plus = Statevector([<span class="tok-num">1</span>, <span class="tok-num">1</span>]) / np.sqrt(<span class="tok-num">2</span>)
+two_copies = plus.tensor(plus)
+
+<span class="tok-fn">print</span>(<span class="tok-str">"CNOT result:"</span>, actual.probabilities_dict())
+<span class="tok-fn">print</span>(<span class="tok-str">"Two copies:"</span>, two_copies.probabilities_dict())
+<span class="tok-fn">print</span>(<span class="tok-str">"Fidelity:"</span>, state_fidelity(actual, two_copies))  <span class="tok-com"># 0.5, not 1</span></pre>
+    </div>
+  </div>
+</section>
+
+<section class="unit" id="unit3">
+  <div class="unit-head">
+    <div class="unit-num">III</div>
+    <div class="unit-headtext">
+      <div class="eyebrow">9 Hours</div>
+      <h2>Quantum Gates &amp; Circuits</h2>
+    </div>
+  </div>
+  <p class="unit-intro">Gates are how we steer a qubit's state around the Bloch sphere. Click "Apply" on each card below and watch the vector actually move.</p>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">01</span> The Single-Qubit Gate Set</h3>
+    <div class="grid-4" id="gateCards">
+      <div class="gate-card" data-gate="X">
+        <div class="gate-sym">X</div>
+        <h4>Pauli-X</h4>
+        <div class="matrix">[[0,1],[1,0]]</div>
+        <p class="desc">The quantum "NOT" — flips |0⟩↔|1⟩. Rotates the Bloch vector 180° about the x-axis.</p>
+        <svg class="mini-bloch" viewBox="0 0 200 200" width="120" height="120"></svg>
+        <div class="btn-row" style="justify-content:center;"><button class="btn apply-gate">Apply</button><button class="btn ghost reset-gate">Reset</button></div>
+      </div>
+      <div class="gate-card" data-gate="Y">
+        <div class="gate-sym">Y</div>
+        <h4>Pauli-Y</h4>
+        <div class="matrix">[[0,-i],[i,0]]</div>
+        <p class="desc">Flips |0⟩↔|1⟩ with a phase twist. Rotates the Bloch vector 180° about the y-axis.</p>
+        <svg class="mini-bloch" viewBox="0 0 200 200" width="120" height="120"></svg>
+        <div class="btn-row" style="justify-content:center;"><button class="btn apply-gate">Apply</button><button class="btn ghost reset-gate">Reset</button></div>
+      </div>
+      <div class="gate-card" data-gate="Z">
+        <div class="gate-sym">Z</div>
+        <h4>Pauli-Z</h4>
+        <div class="matrix">[[1,0],[0,-1]]</div>
+        <p class="desc">Leaves |0⟩,|1⟩ alone but flips the phase of |1⟩. Rotates the Bloch vector 180° about the z-axis.</p>
+        <svg class="mini-bloch" viewBox="0 0 200 200" width="120" height="120"></svg>
+        <div class="btn-row" style="justify-content:center;"><button class="btn apply-gate">Apply</button><button class="btn ghost reset-gate">Reset</button></div>
+      </div>
+      <div class="gate-card" data-gate="H">
+        <div class="gate-sym">H</div>
+        <h4>Hadamard</h4>
+        <div class="matrix">1/√2 [[1,1],[1,-1]]</div>
+        <p class="desc">The superposition-maker. Sends |0⟩ to the equator, halfway between |0⟩ and |1⟩.</p>
+        <svg class="mini-bloch" viewBox="0 0 200 200" width="120" height="120"></svg>
+        <div class="btn-row" style="justify-content:center;"><button class="btn apply-gate">Apply</button><button class="btn ghost reset-gate">Reset</button></div>
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-head"><span>apply_gate.py</span><button class="copy-btn">Copy</button></div>
+      <pre><span class="tok-kw">from</span> qiskit <span class="tok-kw">import</span> QuantumCircuit
+<span class="tok-kw">from</span> qiskit.quantum_info <span class="tok-kw">import</span> Statevector
+
+qc = QuantumCircuit(<span class="tok-num">1</span>)
+qc.x(<span class="tok-num">0</span>)     <span class="tok-com"># try replacing with .y(0), .z(0), .h(0)</span>
+
+state = Statevector.from_instruction(qc)
+<span class="tok-fn">print</span>(state.probabilities())</pre>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">02</span> Phase Gates — S and T</h3>
+    <p class="muted">S and T don't flip the qubit at all — they rotate its phase around the z-axis of the Bloch sphere. You can't see their effect on |0⟩ or |1⟩ themselves, but on an equatorial state (after a Hadamard) the rotation is plain to see. These two cards start at |+⟩ so you can watch it happen.</p>
+    <div class="panel" style="margin:1rem 0;">
+      <h4 style="font-size:1rem;">Global phase and relative phase</h4>
+      <p class="muted">Multiplying an entire state by e<sup>iγ</sup> is a global phase and changes no measurement probability. A phase difference between basis components is relative phase and can change interference.</p>
+      <div class="matrix" style="margin:.75rem 0;">|+⟩=(|0⟩+|1⟩)/√2 &nbsp;&nbsp; |−⟩=(|0⟩−|1⟩)/√2</div>
+      <p class="muted">Both states give 50:50 results in the Z basis, but H|+⟩=|0⟩ while H|−⟩=|1⟩. The second Hadamard converts their hidden relative-phase difference into a directly measurable difference.</p>
+    </div>
+    <div class="grid-2" id="phaseGateCards">
+      <div class="gate-card" data-gate="S">
+        <div class="gate-sym">S</div>
+        <h4>S Gate (Phase)</h4>
+        <div class="matrix">[[1,0],[0,i]]</div>
+        <p class="desc">Rotates the phase by 90° (π/2) around the z-axis. Applying it twice equals a Z gate.</p>
+        <svg class="mini-bloch" viewBox="0 0 200 200" width="120" height="120"></svg>
+        <div class="btn-row" style="justify-content:center;"><button class="btn apply-gate">Apply</button><button class="btn ghost reset-gate">Reset</button></div>
+      </div>
+      <div class="gate-card" data-gate="T">
+        <div class="gate-sym">T</div>
+        <h4>T Gate (π/8)</h4>
+        <div class="matrix">[[1,0],[0,e<sup>iπ/4</sup>]]</div>
+        <p class="desc">Rotates the phase by 45° (π/4) around the z-axis. Applying it twice equals an S gate.</p>
+        <svg class="mini-bloch" viewBox="0 0 200 200" width="120" height="120"></svg>
+        <div class="btn-row" style="justify-content:center;"><button class="btn apply-gate">Apply</button><button class="btn ghost reset-gate">Reset</button></div>
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-head"><span>phase_gates.py</span><button class="copy-btn">Copy</button></div>
+      <pre><span class="tok-kw">from</span> qiskit <span class="tok-kw">import</span> QuantumCircuit
+<span class="tok-kw">from</span> qiskit.quantum_info <span class="tok-kw">import</span> Statevector
+
+qc = QuantumCircuit(<span class="tok-num">1</span>)
+qc.h(<span class="tok-num">0</span>)     <span class="tok-com"># move to the equator: |+> = (|0>+|1>)/sqrt(2)</span>
+qc.s(<span class="tok-num">0</span>)     <span class="tok-com"># try replacing with .t(0), .sdg(0), .tdg(0)</span>
+
+state = Statevector.from_instruction(qc)
+<span class="tok-fn">print</span>(state)                  <span class="tok-com"># probabilities are unchanged - only the relative phase shifted</span>
+<span class="tok-fn">print</span>(state.probabilities())  <span class="tok-com"># still [0.5, 0.5]</span></pre>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">03</span> CNOT — A Two-Qubit Gate</h3>
+    <p class="muted">CNOT (controlled-X) acts on two qubits: a <b>control</b> and a <b>target</b>. If the control is |1⟩, the target is flipped; if the control is |0⟩, nothing happens. Toggle the control qubit below.</p>
+
+    <div class="panel" style="margin-top:1rem;">
+      <h4 style="margin-bottom:.65rem;">Prerequisite theory, in simple language</h4>
+      <p class="muted">A single qubit can be in |0⟩, |1⟩, or a superposition of both. With two qubits there are four basis states: |00⟩, |01⟩, |10⟩ and |11⟩. In this notation the right-hand bit is q0 and the left-hand bit is q1, matching Qiskit’s displayed bit order.</p>
+      <div class="grid-2" style="margin-top:1rem;">
+        <div>
+          <h4 style="font-size:.95rem;">Hadamard gate (H)</h4>
+          <p class="muted" style="font-size:.87rem;">H changes a definite |0⟩ into an equal superposition. It does not randomly choose a value at this stage; it creates two probability amplitudes that can later interfere.</p>
+          <div class="matrix" style="margin-top:.65rem;">H|0⟩ = (|0⟩ + |1⟩)/√2</div>
+        </div>
+        <div>
+          <h4 style="font-size:.95rem;">Controlled-NOT gate (CNOT)</h4>
+          <p class="muted" style="font-size:.87rem;">CNOT reads neither qubit. It applies X to the target only on the branch where the control is |1⟩.</p>
+          <div class="matrix" style="margin-top:.65rem;">|00⟩→|00⟩ &nbsp; |01⟩→|11⟩<br>|10⟩→|10⟩ &nbsp; |11⟩→|01⟩</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:1rem;">
+      <h4 style="margin-bottom:.65rem;">Mathematical explanation: creating a Bell state</h4>
+      <p class="muted">Begin with both qubits in |0⟩. The joint state is formed using the tensor product:</p>
+      <div class="matrix" style="margin:.75rem 0;">|0⟩⊗|0⟩ = |00⟩</div>
+      <p class="muted">Apply H only to q0. Because q1 remains |0⟩, the two-qubit state becomes:</p>
+      <div class="matrix" style="margin:.75rem 0;">(I⊗H)|00⟩ = (|00⟩ + |01⟩)/√2</div>
+      <p class="muted">Now apply CNOT with q0 as control and q1 as target. The |00⟩ branch remains |00⟩. In the |01⟩ branch, q0 is 1, so q1 flips and |01⟩ becomes |11⟩:</p>
+      <div class="matrix" style="margin:.75rem 0; color:var(--cyan);">CNOT (|00⟩ + |01⟩)/√2 = (|00⟩ + |11⟩)/√2 = |Φ⁺⟩</div>
+      <p class="muted">This final state cannot be separated into an independent state for q0 and another independent state for q1. The qubits are entangled. Measurement gives 00 or 11 with probability 1/2 each; 01 and 10 have zero probability in an ideal circuit.</p>
+    </div>
+
+    <div class="panel" style="margin-top:1rem;">
+      <h4 style="margin-bottom:.8rem;">Circuit and gate-by-gate evolution</h4>
+      <svg viewBox="0 0 620 160" width="100%" height="160" role="img" aria-label="Hadamard followed by CNOT and measurement">
+        <line x1="55" y1="48" x2="570" y2="48" stroke="#28315c" stroke-width="2"/>
+        <line x1="55" y1="112" x2="570" y2="112" stroke="#28315c" stroke-width="2"/>
+        <text x="12" y="53" font-family="IBM Plex Mono" font-size="13" fill="#8c96be">q0 |0⟩</text>
+        <text x="12" y="117" font-family="IBM Plex Mono" font-size="13" fill="#8c96be">q1 |0⟩</text>
+        <rect x="150" y="29" width="38" height="38" rx="5" fill="#121833" stroke="#4fe0e8" stroke-width="2"/>
+        <text x="169" y="54" text-anchor="middle" font-family="Space Grotesk" font-size="16" fill="#4fe0e8">H</text>
+        <circle cx="305" cy="48" r="7" fill="#4fe0e8"/>
+        <line x1="305" y1="48" x2="305" y2="112" stroke="#4fe0e8" stroke-width="2"/>
+        <circle cx="305" cy="112" r="15" fill="none" stroke="#4fe0e8" stroke-width="2"/>
+        <line x1="296" y1="112" x2="314" y2="112" stroke="#4fe0e8" stroke-width="2"/>
+        <line x1="305" y1="103" x2="305" y2="121" stroke="#4fe0e8" stroke-width="2"/>
+        <rect x="460" y="29" width="38" height="38" rx="5" fill="#121833" stroke="#ffc857"/>
+        <rect x="460" y="93" width="38" height="38" rx="5" fill="#121833" stroke="#ffc857"/>
+        <text x="479" y="54" text-anchor="middle" font-size="18" fill="#ffc857">≈</text>
+        <text x="479" y="118" text-anchor="middle" font-size="18" fill="#ffc857">≈</text>
+        <text x="169" y="88" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#8c96be">superpose</text>
+        <text x="305" y="145" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#8c96be">entangle</text>
+        <text x="479" y="145" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="#8c96be">measure</text>
+      </svg>
+      <ol class="bullets" style="margin-top:.5rem;">
+        <li><b>Initialise:</b> <code>QuantumCircuit(2)</code> starts in |00⟩.</li>
+        <li><b>Superpose:</b> <code>h(0)</code> creates equal |00⟩ and |01⟩ amplitudes.</li>
+        <li><b>Entangle:</b> <code>cx(0,1)</code> correlates the target with the control, producing |Φ⁺⟩.</li>
+        <li><b>Inspect:</b> calculate the statevector before adding measurement; measurement destroys the statevector’s coherent phase information.</li>
+        <li><b>Measure:</b> repeated shots reveal the predicted 00/11 correlation.</li>
+      </ol>
+    </div>
+
+    <div class="panel">
+      <svg id="cnotSvg" viewBox="0 0 460 140" width="100%" height="140"></svg>
+      <div class="btn-row"><button class="btn" id="cnotToggle">Toggle control qubit</button></div>
+      <p class="muted" style="font-size:.85rem; margin-top:.6rem;">CNOT is exactly how entanglement gets created on real hardware: apply a Hadamard to the control, then CNOT onto the target, and the two qubits become a <b>Bell pair</b> — the |00⟩ and |11⟩ outcomes become equally likely, and nothing else.</p>
+    </div>
+    <div class="code-block">
+      <div class="code-head"><span>bell_state.py</span><button class="copy-btn">Copy</button></div>
+      <pre><span class="tok-kw">from</span> qiskit <span class="tok-kw">import</span> QuantumCircuit
+<span class="tok-kw">from</span> qiskit_aer <span class="tok-kw">import</span> AerSimulator
+<span class="tok-kw">from</span> qiskit.quantum_info <span class="tok-kw">import</span> Statevector
+<span class="tok-kw">from</span> qiskit.visualization <span class="tok-kw">import</span> plot_histogram
+
+qc = QuantumCircuit(<span class="tok-num">2</span>)
+qc.h(<span class="tok-num">0</span>)        <span class="tok-com"># put qubit 0 into superposition</span>
+qc.cx(<span class="tok-num">0</span>, <span class="tok-num">1</span>)    <span class="tok-com"># entangle qubit 0 with qubit 1</span>
+
+state = Statevector.from_instruction(qc)
+<span class="tok-fn">print</span>(state.draw(<span class="tok-str">'text'</span>))
+<span class="tok-fn">print</span>(state.probabilities_dict())  <span class="tok-com"># {'00': 0.5, '11': 0.5}</span>
+
+measured = qc.copy()
+measured.measure_all()
+
+sim = AerSimulator()
+counts = sim.run(measured, shots=<span class="tok-num">1000</span>).result().get_counts()
+plot_histogram(counts)   <span class="tok-com"># expect ~50% '00' and ~50% '11', never '01' or '10'</span></pre>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">04</span> The Toffoli Gate (CCX) — A Universal Building Block</h3>
+    <p class="muted">The Toffoli gate has <i>two</i> controls and one target: the target flips only if <b>both</b> controls are |1⟩ — it's a quantum AND gate wired into a reversible circuit. Together with single-qubit gates, Toffoli is enough to build any classical logic circuit reversibly, and is a core ingredient of the arithmetic inside Shor's algorithm. Toggle the two controls below.</p>
+    <div class="panel">
+      <svg id="toffoliSvg" viewBox="0 0 460 190" width="100%" height="190"></svg>
+      <div class="btn-row"><button class="btn" id="toffoliToggleA">Toggle control A</button><button class="btn" id="toffoliToggleB">Toggle control B</button></div>
+    </div>
+    <div class="code-block">
+      <div class="code-head"><span>toffoli.py</span><button class="copy-btn">Copy</button></div>
+      <pre><span class="tok-kw">from</span> qiskit <span class="tok-kw">import</span> QuantumCircuit
+<span class="tok-kw">from</span> qiskit.quantum_info <span class="tok-kw">import</span> Statevector
+
+qc = QuantumCircuit(<span class="tok-num">3</span>)
+qc.x(<span class="tok-num">0</span>); qc.x(<span class="tok-num">1</span>)  <span class="tok-com"># set both controls to |1></span>
+qc.ccx(<span class="tok-num">0</span>, <span class="tok-num">1</span>, <span class="tok-num">2</span>)         <span class="tok-com"># target (qubit 2) flips only if both controls are 1</span>
+
+state = Statevector.from_instruction(qc)
+<span class="tok-fn">print</span>(state.probabilities_dict())  <span class="tok-com"># {'111': 1.0}</span></pre>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">05</span> Reading a Circuit Diagram</h3>
+    <div class="panel">
+      <svg viewBox="0 0 600 130" width="100%" height="130">
+        <line x1="40" y1="35" x2="560" y2="35" stroke="#28315c"/>
+        <line x1="40" y1="90" x2="560" y2="90" stroke="#28315c"/>
+        <text x="10" y="39" font-family="IBM Plex Mono" font-size="12" fill="#8c96be">q0</text>
+        <text x="10" y="94" font-family="IBM Plex Mono" font-size="12" fill="#8c96be">q1</text>
+        <rect x="110" y="18" width="34" height="34" rx="4" fill="#121833" stroke="#4fe0e8"/>
+        <text x="127" y="40" text-anchor="middle" font-family="Space Grotesk" font-size="14" fill="#4fe0e8">H</text>
+        <circle cx="230" cy="35" r="6" fill="#4fe0e8"/>
+        <line x1="230" y1="35" x2="230" y2="90" stroke="#4fe0e8" stroke-width="2"/>
+        <circle cx="230" cy="90" r="14" fill="none" stroke="#4fe0e8" stroke-width="2"/>
+        <line x1="222" y1="90" x2="238" y2="90" stroke="#4fe0e8" stroke-width="2"/>
+        <line x1="230" y1="82" x2="230" y2="98" stroke="#4fe0e8" stroke-width="2"/>
+        <rect x="470" y="18" width="34" height="34" rx="4" fill="#121833" stroke="#ffc857"/>
+        <text x="487" y="40" text-anchor="middle" font-family="Space Grotesk" font-size="20" fill="#ffc857">≈</text>
+        <rect x="470" y="73" width="34" height="34" rx="4" fill="#121833" stroke="#ffc857"/>
+        <text x="487" y="95" text-anchor="middle" font-family="Space Grotesk" font-size="20" fill="#ffc857">≈</text>
+      </svg>
+      <ul class="bullets" style="margin-top:1rem;">
+        <li><b>Wires</b> (horizontal lines) represent qubits, one per row.</li>
+        <li><b>Time flows left to right</b> — each box is one operation, applied in order.</li>
+        <li><b>Boxes</b> are single-qubit gates; a <b>vertical line with a dot and a ⊕</b> is a CNOT (dot = control, ⊕ = target).</li>
+        <li>A <b>meter symbol</b> (≈) marks measurement — the point where superposition collapses to a classical bit.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">06</span> The Role of Measurement</h3>
+    <p class="muted">Measuring a qubit forces it to "choose" 0 or 1, with probability set by its amplitudes — and after that, the superposition is gone. Run the experiment below: it puts a qubit into a 50/50 superposition with a Hadamard gate, then measures it, over and over, exactly like Qiskit's <code>shots</code> parameter does.</p>
+    <div class="panel">
+      <div class="grid-2">
+        <div>
+          <p class="muted" style="font-size:.85rem;">Before measurement (superposition):</p>
+          <div class="barchart" style="height:90px;">
+            <div class="bar-col"><div class="val">0.50</div><div class="bar" style="height:50%; background:linear-gradient(180deg,var(--cyan),var(--cyan-dim));"></div><div class="lab">P(0)</div></div>
+            <div class="bar-col"><div class="val">0.50</div><div class="bar" style="height:50%; background:linear-gradient(180deg,var(--cyan),var(--cyan-dim));"></div><div class="lab">P(1)</div></div>
+          </div>
+        </div>
+        <div>
+          <p class="muted" style="font-size:.85rem;">Running tally of measured shots:</p>
+          <div class="barchart" style="height:90px;">
+            <div class="bar-col"><div class="val" id="shot0val">0</div><div class="bar" id="shot0bar" style="height:2%;"></div><div class="lab">0</div></div>
+            <div class="bar-col"><div class="val" id="shot1val">0</div><div class="bar" id="shot1bar" style="height:2%;"></div><div class="lab">1</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="btn-row"><button class="btn" id="measureOnceBtn">Measure ×1</button><button class="btn" id="measure100Btn">Measure ×100 (run shots)</button><button class="btn ghost" id="measureResetBtn">Reset tally</button></div>
+    </div>
+    <div class="panel" style="margin-top:1rem;">
+      <h4 style="font-size:1rem;">Probability, basis and collapse</h4>
+      <p class="muted">For |ψ⟩=α|0⟩+β|1⟩, a measurement in the computational or Z basis returns 0 with probability |α|² and 1 with probability |β|². The normalization rule |α|²+|β|²=1 guarantees that the probabilities total one.</p>
+      <div class="matrix" style="margin:.75rem 0;">|+⟩=(|0⟩+|1⟩)/√2 &nbsp;⇒&nbsp; P(0)=P(1)=1/2</div>
+      <p class="muted">One shot returns one classical outcome, never “half 0 and half 1.” Many shots require preparing the same state again for every run. They estimate a distribution across repeated preparations; they do not expose the amplitudes of one individual qubit.</p>
+      <p class="muted">Measurement also depends on the chosen basis. H|+⟩=|0⟩, so placing H before a Z-basis measurement is equivalent to measuring the original state in the X basis.</p>
+    </div>
+    <div class="code-block">
+      <div class="code-head"><span>measurement_basis.py</span><button class="copy-btn">Copy</button></div>
+      <pre><span class="tok-kw">from</span> qiskit <span class="tok-kw">import</span> QuantumCircuit
+<span class="tok-kw">from</span> qiskit_aer <span class="tok-kw">import</span> AerSimulator
+
+<span class="tok-kw">def</span> <span class="tok-fn">measure_plus</span>(basis, shots=<span class="tok-num">1000</span>):
+    qc = QuantumCircuit(<span class="tok-num">1</span>, <span class="tok-num">1</span>)
+    qc.h(<span class="tok-num">0</span>)              <span class="tok-com"># prepare |+></span>
+    <span class="tok-kw">if</span> basis == <span class="tok-str">"X"</span>:
+        qc.h(<span class="tok-num">0</span>)          <span class="tok-com"># rotate X basis into the measurable Z basis</span>
+    qc.measure(<span class="tok-num">0</span>, <span class="tok-num">0</span>)
+    <span class="tok-kw">return</span> AerSimulator().run(qc, shots=shots).result().get_counts()
+
+<span class="tok-fn">print</span>(<span class="tok-str">"Z-basis:"</span>, measure_plus(<span class="tok-str">"Z"</span>))  <span class="tok-com"># about 50% 0 and 50% 1</span>
+<span class="tok-fn">print</span>(<span class="tok-str">"X-basis:"</span>, measure_plus(<span class="tok-str">"X"</span>))  <span class="tok-com"># always 0 because |+> is an X eigenstate</span></pre>
+    </div>
+  </div>
+</section>
+
+<section class="unit" id="unit4">
+  <div class="unit-head">
+    <div class="unit-num">IV</div>
+    <div class="unit-headtext">
+      <div class="eyebrow">9 Hours</div>
+      <h2>Quantum Computation</h2>
+    </div>
+  </div>
+  <p class="unit-intro">Zooming out from individual gates: what counting as a "model" of quantum computation, what makes a problem worth handing to a quantum computer, and what it actually takes to build one.</p>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">01</span> Models for Computation</h3>
+    <div class="grid-3">
+      <div class="panel">
+        <h4 style="font-size:1rem;">Circuit Model</h4>
+        <p class="muted" style="font-size:.85rem;">The model used throughout this course — qubits flow through a sequence of gates, then get measured. The most common and best-supported model on real hardware today.</p>
+      </div>
+      <div class="panel">
+        <h4 style="font-size:1rem;">Adiabatic Model</h4>
+        <p class="muted" style="font-size:.85rem;">The system is slowly evolved from an easy-to-prepare state into one whose lowest-energy configuration encodes the answer to a problem. Used by quantum annealers.</p>
+      </div>
+      <div class="panel">
+        <h4 style="font-size:1rem;">Measurement-Based</h4>
+        <p class="muted" style="font-size:.85rem;">Computation proceeds purely by measuring qubits in a large pre-entangled cluster state, one at a time, in a chosen order.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">02</span> Which Problems Benefit?</h3>
+    <div class="panel">
+      <p class="muted">Classical complexity theory sorts problems into classes like <b>P</b> (easy to solve) and <b>NP</b> (easy to check). Quantum computers add a new class, <b>BQP</b> — problems efficiently solvable on a quantum computer. BQP is believed to contain some problems outside efficient classical reach (like factoring large numbers), but it does <i>not</i> make every hard problem easy. Most NP-hard problems are not known to have quantum speedups.</p>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">03</span> Conditions for Quantum Computation</h3>
+    <div class="panel">
+      <ul class="bullets">
+        <li><b>Well-characterized qubits</b> that can be scaled up to many copies.</li>
+        <li><b>Reliable initialisation</b> — the ability to reset every qubit to a known starting state.</li>
+        <li><b>Long coherence times</b> — the qubit must hold its state much longer than a gate takes to run.</li>
+        <li><b>A universal gate set</b> — enough gate types to build any quantum algorithm.</li>
+        <li><b>High-fidelity measurement</b> — reading out each qubit's final state reliably.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">04</span> Physical Realisations</h3>
+    <div class="grid-4">
+      <div class="panel" style="text-align:center;">
+        <svg viewBox="0 0 100 80" width="80" height="64"><circle cx="50" cy="40" r="22" fill="none" stroke="#4fe0e8" stroke-width="2" class="pulse-ring"/><circle cx="50" cy="40" r="6" fill="#4fe0e8"/></svg>
+        <h4 style="font-size:.9rem;">Superconducting Circuits</h4>
+        <p class="muted" style="font-size:.78rem;">Tiny circuits cooled near absolute zero; qubits are quantised current/voltage states. Used by IBM, Google.</p>
+      </div>
+      <div class="panel" style="text-align:center;">
+        <svg viewBox="0 0 100 80" width="80" height="64"><line x1="15" y1="40" x2="85" y2="40" stroke="#28315c"/><circle cx="35" cy="40" r="5" fill="#ffc857"/><circle cx="65" cy="40" r="5" fill="#ffc857"/></svg>
+        <h4 style="font-size:.9rem;">Trapped Ions</h4>
+        <p class="muted" style="font-size:.78rem;">Individual charged atoms held by electromagnetic fields; qubits are electronic energy levels, controlled with lasers.</p>
+      </div>
+      <div class="panel" style="text-align:center;">
+        <svg viewBox="0 0 100 80" width="80" height="64"><path d="M10,40 Q25,15 40,40 T70,40 T100,40" fill="none" stroke="#ff5da6" stroke-width="2"/></svg>
+        <h4 style="font-size:.9rem;">Harmonic Oscillator QC</h4>
+        <p class="muted" style="font-size:.78rem;">Uses the evenly-spaced energy "ladder" of a quantum harmonic oscillator (e.g. an ion's motion, or a microwave resonator) as computational levels.</p>
+      </div>
+      <div class="panel" style="text-align:center;">
+        <svg viewBox="0 0 100 80" width="80" height="64"><line x1="10" y1="40" x2="90" y2="40" stroke="#28315c"/><circle cx="50" cy="40" r="4" fill="#7cffb2" class="photon-dot"/></svg>
+        <h4 style="font-size:.9rem;">Optical / Photonic</h4>
+        <p class="muted" style="font-size:.78rem;">Single photons act as qubits, steered with beam splitters and mirrors; travels easily through fibre, but two-photon gates are hard.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">05</span> Decoherence, Error Correction &amp; the NISQ Era</h3>
+    <div class="grid-2">
+      <div class="panel">
+        <p class="muted">Real qubits leak information into their environment — <b>decoherence</b> — and gates are never perfectly precise. Today's machines are firmly in the <b>NISQ</b> era (Noisy Intermediate-Scale Quantum): tens to a few thousand qubits, with no full error correction yet. The five conditions in block 03 are sometimes called <b>DiVincenzo's criteria</b>, after the physicist who first listed them as requirements for a practical quantum computer.</p>
+        <p class="muted">The fix is <b>quantum error correction</b>: spread one "logical" qubit's information across several noisy "physical" qubits so that an error on any single one can be detected and reversed — without ever directly measuring (and collapsing) the protected information.</p>
+      </div>
+      <div class="panel">
+        <h4 style="font-size:1rem;">3-Qubit Bit-Flip Code — Try It</h4>
+        <p class="muted" style="font-size:.85rem;">Encode logical |1⟩ as |111⟩ across 3 physical qubits. Inject a random bit-flip error, then correct it by majority vote.</p>
+        <div style="display:flex; justify-content:center; gap:1rem; margin:1rem 0;" id="qecBits">
+          <div class="qecbit">1</div><div class="qecbit">1</div><div class="qecbit">1</div>
+        </div>
+        <p class="muted" style="font-family:var(--font-m); font-size:.8rem; text-align:center;" id="qecStatus">Encoded: |111⟩ — no error yet.</p>
+        <div class="btn-row" style="justify-content:center;"><button class="btn" id="qecErrorBtn">Inject random error</button><button class="btn" id="qecCorrectBtn">Correct (majority vote)</button><button class="btn ghost" id="qecResetBtn">Reset</button></div>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:1rem;">
+      <h4 style="font-size:1rem;">Encoding, syndrome and correction</h4>
+      <p class="muted">The logical state α|0⟩+β|1⟩ is encoded as α|000⟩+β|111⟩. The amplitudes are not measured. Two parity checks only reveal whether neighbouring physical qubits agree, producing a syndrome that identifies one flipped qubit.</p>
+      <div class="matrix" style="margin:.75rem 0;">00: no error &nbsp; 10: q0 flipped &nbsp; 11: q1 flipped &nbsp; 01: q2 flipped</div>
+      <p class="muted">Applying X to the indicated qubit restores the encoded state. This code handles one X error, not phase errors or two simultaneous bit flips.</p>
+    </div>
+    <div class="code-block">
+      <div class="code-head"><span>bit_flip_code.py</span><button class="copy-btn">Copy</button></div>
+      <pre><span class="tok-kw">import</span> numpy <span class="tok-kw">as</span> np
+<span class="tok-kw">from</span> qiskit <span class="tok-kw">import</span> QuantumCircuit
+<span class="tok-kw">from</span> qiskit.quantum_info <span class="tok-kw">import</span> Statevector, partial_trace, state_fidelity
+
+theta = <span class="tok-num">0.9</span>
+qc = QuantumCircuit(<span class="tok-num">5</span>)      <span class="tok-com"># q0-q2 data; q3-q4 syndrome ancillas</span>
+qc.ry(theta, <span class="tok-num">0</span>)       <span class="tok-com"># prepare an arbitrary logical state on q0</span>
+qc.cx(<span class="tok-num">0</span>, <span class="tok-num">1</span>); qc.cx(<span class="tok-num">0</span>, <span class="tok-num">2</span>)
+qc.x(<span class="tok-num">1</span>)               <span class="tok-com"># inject one X error on physical qubit q1</span>
+
+qc.cx(<span class="tok-num">0</span>, <span class="tok-num">3</span>); qc.cx(<span class="tok-num">1</span>, <span class="tok-num">3</span>)  <span class="tok-com"># syndrome s01</span>
+qc.cx(<span class="tok-num">1</span>, <span class="tok-num">4</span>); qc.cx(<span class="tok-num">2</span>, <span class="tok-num">4</span>)  <span class="tok-com"># syndrome s12</span>
+
+qc.x(<span class="tok-num">4</span>); qc.ccx(<span class="tok-num">3</span>, <span class="tok-num">4</span>, <span class="tok-num">0</span>); qc.x(<span class="tok-num">4</span>)
+qc.ccx(<span class="tok-num">3</span>, <span class="tok-num">4</span>, <span class="tok-num">1</span>)
+qc.x(<span class="tok-num">3</span>); qc.ccx(<span class="tok-num">3</span>, <span class="tok-num">4</span>, <span class="tok-num">2</span>); qc.x(<span class="tok-num">3</span>)
+
+qc.cx(<span class="tok-num">1</span>, <span class="tok-num">4</span>); qc.cx(<span class="tok-num">2</span>, <span class="tok-num">4</span>)  <span class="tok-com"># clear syndrome ancillas</span>
+qc.cx(<span class="tok-num">0</span>, <span class="tok-num">3</span>); qc.cx(<span class="tok-num">1</span>, <span class="tok-num">3</span>)
+qc.cx(<span class="tok-num">0</span>, <span class="tok-num">2</span>); qc.cx(<span class="tok-num">0</span>, <span class="tok-num">1</span>)  <span class="tok-com"># decode</span>
+
+recovered = partial_trace(Statevector.from_instruction(qc), [<span class="tok-num">1</span>,<span class="tok-num">2</span>,<span class="tok-num">3</span>,<span class="tok-num">4</span>])
+target = Statevector([np.cos(theta/<span class="tok-num">2</span>), np.sin(theta/<span class="tok-num">2</span>)])
+<span class="tok-fn">print</span>(state_fidelity(recovered, target))  <span class="tok-com"># 1.0: the logical state is recovered</span></pre>
+    </div>
+  </div>
+</section>
+
+<section class="unit" id="unit5">
+  <div class="unit-head">
+    <div class="unit-num">V</div>
+    <div class="unit-headtext">
+      <div class="eyebrow">9 Hours</div>
+      <h2>Applications of Quantum Computing</h2>
+    </div>
+  </div>
+  <p class="unit-intro">Where all of this actually gets used — and the two algorithms most responsible for the field's reputation.</p>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">01</span> Quantum Cryptography</h3>
+    <p class="muted">In quantum key distribution (e.g. the BB84 protocol), Alice sends Bob single photons encoded in randomly chosen bases. Because measuring a quantum state in the "wrong" basis disturbs it, any eavesdropper listening in leaves detectable fingerprints. Run the exchange below.</p>
+    <div class="panel">
+      <table class="seq" id="bb84Table">
+        <tr><th>Round</th><th>Alice's bit</th><th>Alice's basis</th><th>Bob's basis</th><th>Bases match?</th><th>Kept as key bit?</th></tr>
+      </table>
+      <div class="btn-row"><button class="btn" id="bb84Btn">Run key exchange</button></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">02</span> Optimisation &amp; Machine Learning</h3>
+    <div class="grid-2">
+      <div class="panel">
+        <h4 style="font-size:1rem;">Optimisation</h4>
+        <p class="muted" style="font-size:.85rem;">Algorithms like QAOA encode a problem (e.g. routing, scheduling) as an energy landscape, then use quantum circuits to search for low-energy — i.e. good — solutions faster than classical heuristics in some cases.</p>
+      </div>
+      <div class="panel">
+        <h4 style="font-size:1rem;">Machine Learning</h4>
+        <p class="muted" style="font-size:.85rem;">Quantum feature maps embed classical data into a high-dimensional quantum state space, where patterns that are hard to separate classically may become easier to classify.</p>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:1rem;">
+      <h4 style="font-size:1rem;">How variational quantum algorithms work</h4>
+      <p class="muted">QAOA and VQE are hybrid algorithms. A parameterised circuit prepares a trial state; a classical optimiser changes its angles using an objective estimated from the quantum state.</p>
+      <div class="grid-2" style="margin-top:.8rem;">
+        <div><p class="muted"><b>QAOA:</b> alternate a cost operator with a mixer to favour better bit strings.</p><div class="matrix">|ψ(γ,β)⟩=U<sub>B</sub>(β)U<sub>C</sub>(γ)|+⟩<sup>⊗n</sup></div></div>
+        <div><p class="muted"><b>VQE:</b> minimise the expected Hamiltonian energy.</p><div class="matrix">E(θ)=⟨ψ(θ)|H|ψ(θ)⟩ ≥ E<sub>0</sub></div></div>
+      </div>
+      <p class="muted" style="margin-top:.8rem;">These small examples illustrate the workflow; they do not by themselves demonstrate an advantage over classical optimisation.</p>
+    </div>
+    <div class="code-block">
+      <div class="code-head"><span>qaoa_maxcut_sketch.py</span><button class="copy-btn">Copy</button></div>
+      <pre><span class="tok-kw">from</span> qiskit <span class="tok-kw">import</span> QuantumCircuit
+
+<span class="tok-com"># Conceptual sketch of one QAOA layer for a MaxCut-style cost function</span>
+<span class="tok-kw">def</span> <span class="tok-fn">qaoa_layer</span>(qc, edges, gamma, beta):
+    <span class="tok-kw">for</span> (i, j) <span class="tok-kw">in</span> edges:
+        qc.cx(i, j)
+        qc.rz(<span class="tok-num">2</span>*gamma, j)   <span class="tok-com"># cost layer: encodes the graph's edges</span>
+        qc.cx(i, j)
+    <span class="tok-kw">for</span> q <span class="tok-kw">in</span> <span class="tok-fn">range</span>(qc.num_qubits):
+        qc.rx(<span class="tok-num">2</span>*beta, q)     <span class="tok-com"># mixer layer: spreads amplitude to explore solutions</span>
+
+qc = QuantumCircuit(<span class="tok-num">4</span>)
+qc.h(<span class="tok-fn">range</span>(<span class="tok-num">4</span>))
+qaoa_layer(qc, edges=[(<span class="tok-num">0</span>,<span class="tok-num">1</span>),(<span class="tok-num">1</span>,<span class="tok-num">2</span>),(<span class="tok-num">2</span>,<span class="tok-num">3</span>),(<span class="tok-num">3</span>,<span class="tok-num">0</span>)], gamma=<span class="tok-num">0.8</span>, beta=<span class="tok-num">0.4</span>)
+qc.measure_all()
+<span class="tok-com"># a classical optimiser tunes gamma, beta to maximise the cut value, layer by layer</span></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-head"><span>vqe_ground_state.py</span><button class="copy-btn">Copy</button></div>
+      <pre><span class="tok-kw">import</span> numpy <span class="tok-kw">as</span> np
+<span class="tok-kw">from</span> scipy.optimize <span class="tok-kw">import</span> minimize
+<span class="tok-kw">from</span> qiskit <span class="tok-kw">import</span> QuantumCircuit
+<span class="tok-kw">from</span> qiskit.quantum_info <span class="tok-kw">import</span> Statevector, SparsePauliOp
+
+H = SparsePauliOp.from_list([(<span class="tok-str">"Z"</span>, <span class="tok-num">0.5</span>), (<span class="tok-str">"X"</span>, -<span class="tok-num">1.0</span>)])
+
+<span class="tok-kw">def</span> <span class="tok-fn">ansatz</span>(theta):
+    qc = QuantumCircuit(<span class="tok-num">1</span>)
+    qc.ry(theta[<span class="tok-num">0</span>], <span class="tok-num">0</span>); qc.rz(theta[<span class="tok-num">1</span>], <span class="tok-num">0</span>)
+    <span class="tok-kw">return</span> qc
+
+<span class="tok-kw">def</span> <span class="tok-fn">energy</span>(theta):
+    psi = Statevector.from_instruction(ansatz(theta))
+    <span class="tok-kw">return</span> <span class="tok-fn">float</span>(np.real(psi.expectation_value(H)))
+
+result = minimize(energy, [<span class="tok-num">0.2</span>, <span class="tok-num">0.1</span>], method=<span class="tok-str">"COBYLA"</span>)
+exact = np.linalg.eigvalsh(H.to_matrix())[<span class="tok-num">0</span>]
+<span class="tok-fn">print</span>(<span class="tok-str">"VQE energy:"</span>, result.fun)
+<span class="tok-fn">print</span>(<span class="tok-str">"Exact energy:"</span>, exact)  <span class="tok-com"># the values should closely agree</span></pre>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">03</span> Grover's Algorithm — Searching with Interference</h3>
+    <p class="muted">Classically, finding one marked item among N requires checking, on average, N/2 items. Grover's algorithm finds it in roughly √N steps by using interference: an <b>oracle</b> flips the sign of the marked item's amplitude, then a <b>diffusion</b> step reflects every amplitude about the average — which boosts the marked item and suppresses the rest.</p>
+    <div class="panel" style="margin-bottom:1rem;">
+      <h4 style="font-size:1rem;">Amplitude amplification for four possibilities</h4>
+      <p class="muted">Two Hadamards assign amplitude 1/2 to each of 00, 01, 10 and 11. The oracle marks the answer by changing only its sign, from +1/2 to −1/2; probabilities are still 1/4 at this point because a sign change alone is not visible to measurement.</p>
+      <div class="matrix" style="margin:.75rem 0;">Before oracle: [1/2, 1/2, 1/2, 1/2]<br>After marking |10⟩: [1/2, 1/2, −1/2, 1/2]</div>
+      <p class="muted">The new mean amplitude is 1/4. Diffusion maps every amplitude a to 2×mean−a. The unmarked amplitudes become 0 and the marked amplitude becomes 1. This is interference—not parallel checking followed by simply reading every answer.</p>
+      <div class="matrix">Number of iterations ≈ floor(π√N/4)</div>
+    </div>
+    <div class="panel">
+      <p class="muted" style="font-size:.85rem;">4-item search space {00, 01, 10, 11}, marked item = <b style="color:var(--amber);">10</b>. For N=4, exactly <b>one</b> Grover iteration reaches 100% certainty.</p>
+      <div class="barchart" id="groverChart">
+        <div class="bar-col"><div class="val" id="gv0">0.50</div><div class="bar" id="gb0" style="height:50%;"></div><div class="lab">00</div></div>
+        <div class="bar-col"><div class="val" id="gv1">0.50</div><div class="bar" id="gb1" style="height:50%;"></div><div class="lab">01</div></div>
+        <div class="bar-col"><div class="val" id="gv2">0.50</div><div class="bar" id="gb2" style="height:50%;"></div><div class="lab">10 ★</div></div>
+        <div class="bar-col"><div class="val" id="gv3">0.50</div><div class="bar" id="gb3" style="height:50%;"></div><div class="lab">11</div></div>
+      </div>
+      <p class="muted" style="font-size:.78rem; margin-top:.6rem;" id="groverStep">Step 0 of 2 — equal superposition (magenta = negative amplitude, i.e. a phase flip).</p>
+      <div class="btn-row"><button class="btn" id="groverBtn">Run next step</button><button class="btn ghost" id="groverResetBtn">Reset</button></div>
+    </div>
+    <div class="code-block">
+      <div class="code-head"><span>grover_2qubit.py</span><button class="copy-btn">Copy</button></div>
+      <pre><span class="tok-kw">from</span> qiskit <span class="tok-kw">import</span> QuantumCircuit
+<span class="tok-kw">from</span> qiskit_aer <span class="tok-kw">import</span> AerSimulator
+<span class="tok-kw">from</span> qiskit.visualization <span class="tok-kw">import</span> plot_histogram
+
+<span class="tok-com"># 2 qubits, search space {00,01,10,11}, marked state |10>
+</span>qc = QuantumCircuit(<span class="tok-num">2</span>)
+
+qc.h([<span class="tok-num">0</span>, <span class="tok-num">1</span>])        <span class="tok-com"># step 1: equal superposition</span>
+
+<span class="tok-com"># step 2: oracle - flip the phase of |10>
+</span>qc.x(<span class="tok-num">1</span>)
+qc.cz(<span class="tok-num">0</span>, <span class="tok-num">1</span>)
+qc.x(<span class="tok-num">1</span>)
+
+<span class="tok-com"># step 3: diffusion operator (inversion about the mean)
+</span>qc.h([<span class="tok-num">0</span>, <span class="tok-num">1</span>])
+qc.x([<span class="tok-num">0</span>, <span class="tok-num">1</span>])
+qc.cz(<span class="tok-num">0</span>, <span class="tok-num">1</span>)
+qc.x([<span class="tok-num">0</span>, <span class="tok-num">1</span>])
+qc.h([<span class="tok-num">0</span>, <span class="tok-num">1</span>])
+
+qc.measure_all()
+
+sim = AerSimulator()
+counts = sim.run(qc, shots=<span class="tok-num">1000</span>).result().get_counts()
+plot_histogram(counts)   <span class="tok-com"># ~100% '10'</span></pre>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">04</span> Shor's Algorithm — Factoring via Periods (Conceptual)</h3>
+    <p class="muted">Shor's algorithm factors large numbers exponentially faster than the best known classical method — the reason quantum computers threaten RSA encryption. The core trick: factoring N can be reduced to finding the <b>period</b> r of the sequence aˣ mod N, and a quantum computer can find that period efficiently using the <b>Quantum Fourier Transform (QFT)</b>.</p>
+    <div class="panel">
+      <p class="muted" style="font-size:.85rem;">Example: a=2, N=15. The sequence 2ˣ mod 15 repeats with period r=4. Click to step through it.</p>
+      <div class="barchart" id="shorChart" style="height:90px;">
+        <div class="bar-col"><div class="val" id="sv0">–</div><div class="bar" id="sb0" style="height:2%;"></div><div class="lab">x=0</div></div>
+        <div class="bar-col"><div class="val" id="sv1">–</div><div class="bar" id="sb1" style="height:2%;"></div><div class="lab">x=1</div></div>
+        <div class="bar-col"><div class="val" id="sv2">–</div><div class="bar" id="sb2" style="height:2%;"></div><div class="lab">x=2</div></div>
+        <div class="bar-col"><div class="val" id="sv3">–</div><div class="bar" id="sb3" style="height:2%;"></div><div class="lab">x=3</div></div>
+        <div class="bar-col"><div class="val" id="sv4">–</div><div class="bar" id="sb4" style="height:2%;"></div><div class="lab">x=4</div></div>
+        <div class="bar-col"><div class="val" id="sv5">–</div><div class="bar" id="sb5" style="height:2%;"></div><div class="lab">x=5</div></div>
+        <div class="bar-col"><div class="val" id="sv6">–</div><div class="bar" id="sb6" style="height:2%;"></div><div class="lab">x=6</div></div>
+        <div class="bar-col"><div class="val" id="sv7">–</div><div class="bar" id="sb7" style="height:2%;"></div><div class="lab">x=7</div></div>
+      </div>
+      <p class="muted" id="shorCap" style="font-size:.78rem; margin-top:.6rem;">Values repeat every r=4 steps — that repetition is the period the QFT extracts.</p>
+      <div class="btn-row"><button class="btn" id="shorBtn">Step through sequence</button><button class="btn ghost" id="shorResetBtn">Reset</button></div>
+    </div>
+    <div class="code-block">
+      <div class="code-head"><span>shor_sketch.py</span><button class="copy-btn">Copy</button></div>
+      <pre><span class="tok-kw">from</span> qiskit <span class="tok-kw">import</span> QuantumCircuit
+<span class="tok-kw">from</span> qiskit.circuit.library <span class="tok-kw">import</span> QFT
+
+<span class="tok-com"># Conceptual sketch of the quantum part of Shor's algorithm:
+# 1. Prepare a superposition of all possible exponents x
+# 2. Compute a^x mod N into an output register (modular exponentiation)
+# 3. Apply the Quantum Fourier Transform to the exponent register
+# 4. Measure - results peak at multiples of (2^n_count) / period
+</span>
+n_count = <span class="tok-num">4</span>  <span class="tok-com"># qubits used to hold the exponent x</span>
+qc = QuantumCircuit(n_count)
+
+qc.h(<span class="tok-fn">range</span>(n_count))                       <span class="tok-com"># step 1: superposition over x</span>
+<span class="tok-com"># ... modular exponentiation circuit goes here ...
+</span>qc.append(QFT(n_count), <span class="tok-fn">range</span>(n_count))   <span class="tok-com"># step 3: extract the period</span>
+qc.measure_all()</pre>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">05</span> Quantum Teleportation — Moving a State, Not Matter</h3>
+    <p class="muted">Teleportation doesn't transmit matter or energy — it transfers an unknown qubit's exact state from Alice to Bob using one shared entangled pair plus two classical bits sent over an ordinary channel. The no-cloning theorem (Unit II) is exactly why this is needed instead of just copying: Alice's original qubit is destroyed by her measurement in the process.</p>
+    <div class="panel" style="margin:1rem 0;">
+      <h4 style="font-size:1rem;">Why the two classical bits are enough</h4>
+      <p class="muted">After the Bell-basis operations, the three-qubit state can be regrouped by Alice’s two possible measurement bits:</p>
+      <div class="matrix" style="margin:.75rem 0;">1/2 [ |00⟩|ψ⟩ + |01⟩X|ψ⟩ + |10⟩Z|ψ⟩ + |11⟩XZ|ψ⟩ ]</div>
+      <p class="muted">Alice’s result does not reveal α or β. It tells Bob which known Pauli correction is needed: 00→I, 01→X, 10→Z, 11→XZ. After the correction, Bob holds |ψ⟩. Entanglement supplies the quantum correlation; the classical bits complete the protocol and enforce ordinary causal communication.</p>
+    </div>
+    <div class="panel">
+      <svg viewBox="0 0 600 170" width="100%" height="170">
+        <line x1="40" y1="30" x2="560" y2="30" stroke="#28315c"/>
+        <line x1="40" y1="80" x2="560" y2="80" stroke="#28315c"/>
+        <line x1="40" y1="130" x2="560" y2="130" stroke="#28315c"/>
+        <text x="6" y="34" font-family="IBM Plex Mono" font-size="11" fill="#8c96be">|ψ⟩</text>
+        <text x="6" y="84" font-family="IBM Plex Mono" font-size="11" fill="#8c96be">Alice</text>
+        <text x="6" y="134" font-family="IBM Plex Mono" font-size="11" fill="#8c96be">Bob</text>
+        <rect x="90" y="63" width="30" height="34" rx="4" fill="#121833" stroke="#4fe0e8"/>
+        <text x="105" y="85" text-anchor="middle" font-family="Space Grotesk" font-size="13" fill="#4fe0e8">H</text>
+        <circle cx="150" cy="80" r="6" fill="#ffc857"/>
+        <line x1="150" y1="80" x2="150" y2="130" stroke="#ffc857" stroke-width="2"/>
+        <circle cx="150" cy="130" r="13" fill="none" stroke="#ffc857" stroke-width="2"/>
+        <line x1="143" y1="130" x2="157" y2="130" stroke="#ffc857" stroke-width="2"/>
+        <line x1="150" y1="123" x2="150" y2="137" stroke="#ffc857" stroke-width="2"/>
+        <circle cx="230" cy="30" r="6" fill="#ffc857"/>
+        <line x1="230" y1="30" x2="230" y2="80" stroke="#ffc857" stroke-width="2"/>
+        <circle cx="230" cy="80" r="13" fill="none" stroke="#ffc857" stroke-width="2"/>
+        <line x1="223" y1="80" x2="237" y2="80" stroke="#ffc857" stroke-width="2"/>
+        <line x1="230" y1="73" x2="230" y2="87" stroke="#ffc857" stroke-width="2"/>
+        <rect x="290" y="13" width="30" height="34" rx="4" fill="#121833" stroke="#4fe0e8"/>
+        <text x="305" y="35" text-anchor="middle" font-family="Space Grotesk" font-size="13" fill="#4fe0e8">H</text>
+        <rect x="350" y="13" width="34" height="34" rx="4" fill="#121833" stroke="#ffc857"/>
+        <text x="367" y="35" text-anchor="middle" font-family="Space Grotesk" font-size="18" fill="#ffc857">≈</text>
+        <rect x="350" y="63" width="34" height="34" rx="4" fill="#121833" stroke="#ffc857"/>
+        <text x="367" y="85" text-anchor="middle" font-family="Space Grotesk" font-size="18" fill="#ffc857">≈</text>
+        <line x1="384" y1="80" x2="430" y2="120" stroke="#ff5da6" stroke-width="1.5" stroke-dasharray="3 3"/>
+        <line x1="384" y1="30" x2="460" y2="120" stroke="#ff5da6" stroke-width="1.5" stroke-dasharray="3 3"/>
+        <text x="400" y="115" font-family="IBM Plex Mono" font-size="9" fill="#ff5da6">2 classical bits</text>
+        <rect x="430" y="113" width="34" height="34" rx="4" fill="#121833" stroke="#ff5da6"/>
+        <text x="447" y="135" text-anchor="middle" font-family="Space Grotesk" font-size="13" fill="#ff5da6">X</text>
+        <rect x="480" y="113" width="34" height="34" rx="4" fill="#121833" stroke="#ff5da6"/>
+        <text x="497" y="135" text-anchor="middle" font-family="Space Grotesk" font-size="13" fill="#ff5da6">Z</text>
+        <text x="520" y="134" font-family="IBM Plex Mono" font-size="10" fill="#7cffb2">|ψ⟩ ✓</text>
+      </svg>
+      <ul class="bullets" style="margin-top:.6rem;">
+        <li>Alice and Bob start by sharing one Bell pair (one qubit each).</li>
+        <li>Alice entangles her unknown qubit |ψ⟩ with her half of the pair, then measures both — destroying the original.</li>
+        <li>She sends her 2-bit measurement result to Bob over a classical channel — this step cannot happen faster than light, so no information actually travels instantaneously.</li>
+        <li>Bob applies an X and/or Z gate to his qubit based on those 2 bits, and his qubit becomes exactly |ψ⟩.</li>
+      </ul>
+    </div>
+    <div class="code-block">
+      <div class="code-head"><span>teleportation.py</span><button class="copy-btn">Copy</button></div>
+      <pre><span class="tok-kw">from</span> qiskit <span class="tok-kw">import</span> QuantumCircuit
+<span class="tok-kw">from</span> qiskit.quantum_info <span class="tok-kw">import</span> Statevector, partial_trace, state_fidelity
+
+theta, phi = <span class="tok-num">1.1</span>, <span class="tok-num">0.7</span>
+qc = QuantumCircuit(<span class="tok-num">3</span>)
+qc.ry(theta, <span class="tok-num">0</span>); qc.rz(phi, <span class="tok-num">0</span>)  <span class="tok-com"># unknown |psi> on q0</span>
+
+reference = QuantumCircuit(<span class="tok-num">1</span>)
+reference.ry(theta, <span class="tok-num">0</span>); reference.rz(phi, <span class="tok-num">0</span>)
+psi = Statevector.from_instruction(reference)
+
+qc.h(<span class="tok-num">1</span>); qc.cx(<span class="tok-num">1</span>, <span class="tok-num">2</span>)       <span class="tok-com"># shared Bell pair</span>
+qc.cx(<span class="tok-num">0</span>, <span class="tok-num">1</span>); qc.h(<span class="tok-num">0</span>)        <span class="tok-com"># Bell-basis transformation</span>
+qc.cx(<span class="tok-num">1</span>, <span class="tok-num">2</span>); qc.cz(<span class="tok-num">0</span>, <span class="tok-num">2</span>)       <span class="tok-com"># deferred X and Z corrections</span>
+
+final_state = Statevector.from_instruction(qc)
+bob = partial_trace(final_state, [<span class="tok-num">0</span>, <span class="tok-num">1</span>])
+<span class="tok-fn">print</span>(<span class="tok-str">"Teleportation fidelity:"</span>, state_fidelity(bob, psi))  <span class="tok-com"># 1.0</span>
+
+<span class="tok-com"># Deferred measurement keeps the circuit unitary for verification.
+# On hardware, q0 and q1 are measured and their two bits control Bob's corrections.</span></pre>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="subhead"><span class="tag">06</span> Quantum's Role in Science &amp; Industry</h3>
+    <div class="grid-4">
+      <div class="panel" style="text-align:center;"><h4 style="font-size:.9rem;">Drug Discovery</h4><p class="muted" style="font-size:.78rem;">Simulating molecules whose electron interactions overwhelm classical computers.</p></div>
+      <div class="panel" style="text-align:center;"><h4 style="font-size:.9rem;">Materials Science</h4><p class="muted" style="font-size:.78rem;">Designing new catalysts, batteries, and superconductors at the atomic level.</p></div>
+      <div class="panel" style="text-align:center;"><h4 style="font-size:.9rem;">Finance</h4><p class="muted" style="font-size:.78rem;">Portfolio optimisation and risk modelling using quantum-enhanced search.</p></div>
+      <div class="panel" style="text-align:center;"><h4 style="font-size:.9rem;">Logistics</h4><p class="muted" style="font-size:.78rem;">Routing and scheduling problems with enormous combinatorial search spaces.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="unit" id="review">
+  <div class="unit-head">
+    <div class="unit-num">✓</div>
+    <div class="unit-headtext">
+      <div class="eyebrow">Review</div>
+      <h2>Glossary &amp; Flashcards</h2>
+    </div>
+  </div>
+  <p class="unit-intro">Tap a card to flip it. These are the terms most likely to show up across every unit.</p>
+  <div class="grid-4" id="flashGrid"></div>
+</section>
+
+<footer>
+  <p>23OPH971 · Quantum Technology · L-T-P-C 3-0-0-3</p>
+  <a href="#hero" class="back-top">↑ Back to top</a>
+</footer>
+
+</div>
+</main>
+
+<script>
+/* ===================== BLOCH SPHERE ENGINE ===================== */
+function buildBlochSVG(svg){
+  svg.innerHTML =
+    '<circle class="bloch-sphere-circle" cx="100" cy="100" r="80"></circle>' +
+    '<ellipse class="bloch-equator" cx="100" cy="100" rx="80" ry="27"></ellipse>' +
+    '<line class="bloch-axis" x1="100" y1="20" x2="100" y2="180"></line>' +
+    '<text class="bloch-label" x="100" y="13" text-anchor="middle">|0&#10217;</text>' +
+    '<text class="bloch-label" x="100" y="195" text-anchor="middle">|1&#10217;</text>' +
+    '<line class="bloch-vec" x1="100" y1="100" x2="100" y2="20"></line>' +
+    '<circle class="bloch-tip" cx="100" cy="20" r="4"></circle>';
+}
+function blochProject(x,y,z){
+  var R=80, A=20*Math.PI/180;
+  var sx = R*x;
+  var sy = -R*z*Math.cos(A) + R*y*Math.sin(A);
+  return {x:100+sx, y:100+sy};
+}
+function setBlochVector(svg,x,y,z){
+  var p = blochProject(x,y,z);
+  var vec = svg.querySelector('.bloch-vec');
+  var tip = svg.querySelector('.bloch-tip');
+  if(!vec||!tip) return;
+  vec.setAttribute('x2', p.x.toFixed(1));
+  vec.setAttribute('y2', p.y.toFixed(1));
+  tip.setAttribute('cx', p.x.toFixed(1));
+  tip.setAttribute('cy', p.y.toFixed(1));
+}
+function easeInOut(t){ return t<0.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2; }
+function animateBloch(svg, from, to, duration, onDone){
+  var start = performance.now();
+  function frame(now){
+    var t = Math.min(1, (now-start)/duration);
+    var te = easeInOut(t);
+    var x = from.x + (to.x-from.x)*te;
+    var y = from.y + (to.y-from.y)*te;
+    var z = from.z + (to.z-from.z)*te;
+    var n = Math.sqrt(x*x+y*y+z*z) || 1;
+    setBlochVector(svg, x/n, y/n, z/n);
+    if(t<1) requestAnimationFrame(frame);
+    else if(onDone) onDone();
+  }
+  requestAnimationFrame(frame);
+}
+function tween(setter, from, to, duration){
+  var start = performance.now();
+  function step(now){
+    var t = Math.min(1, (now-start)/duration);
+    setter(from + (to-from)*easeInOut(t));
+    if(t<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+var GATES = {
+  X: function(v){ return {x:v.x, y:-v.y, z:-v.z}; },
+  Y: function(v){ return {x:-v.x, y:v.y, z:-v.z}; },
+  Z: function(v){ return {x:-v.x, y:-v.y, z:v.z}; },
+  H: function(v){ return {x:v.z, y:-v.y, z:v.x}; },
+  S: function(v){ var a=Math.PI/2; return {x:v.x*Math.cos(a)-v.y*Math.sin(a), y:v.x*Math.sin(a)+v.y*Math.cos(a), z:v.z}; },
+  T: function(v){ var a=Math.PI/4; return {x:v.x*Math.cos(a)-v.y*Math.sin(a), y:v.x*Math.sin(a)+v.y*Math.cos(a), z:v.z}; }
+};
+
+/* ===================== HERO SPHERE (ambient precession) ===================== */
+(function(){
+  var svg = document.getElementById('heroBloch');
+  buildBlochSVG(svg);
+  var phi = 0, theta = 55*Math.PI/180;
+  function loop(){
+    phi += 0.007;
+    var x=Math.sin(theta)*Math.cos(phi), y=Math.sin(theta)*Math.sin(phi), z=Math.cos(theta);
+    setBlochVector(svg,x,y,z);
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+/* ===================== UNIT I: bit toggle ===================== */
+(function(){
+  var bitState = 0;
+  var knob = document.getElementById('bitKnob');
+  var label = document.getElementById('bitLabel');
+  document.getElementById('bitToggleBtn').onclick = function(){
+    bitState = 1-bitState;
+    var from = bitState? 50:170, to = bitState? 170:50;
+    tween(function(v){ knob.setAttribute('cx', v.toFixed(1)); }, from, to, 350);
+    knob.setAttribute('fill', bitState? '#ff5da6':'#4fe0e8');
+    label.textContent = 'STATE = ' + bitState;
+  };
+})();
+
+/* ===================== UNIT I: logic gates ===================== */
+(function(){
+  var panels = document.querySelectorAll('#unit1 .panel[data-gate]');
+  panels.forEach(function(panel){
+    var gate = panel.dataset.gate;
+    var a=0,b=0;
+    var btns = panel.querySelectorAll('.gbit');
+    var out = panel.querySelector('.gout');
+    function compute(){
+      var r;
+      if(gate==='AND') r = a & b;
+      else if(gate==='OR') r = a | b;
+      else r = a ^ b;
+      out.textContent = r;
+      out.style.color = r? 'var(--green)' : 'var(--muted)';
+    }
+    btns[0].onclick = function(){ a = 1-a; btns[0].textContent='A = '+a; compute(); };
+    btns[1].onclick = function(){ b = 1-b; btns[1].textContent='B = '+b; compute(); };
+    compute();
+  });
+})();
+
+/* ===================== UNIT I: half-adder ===================== */
+(function(){
+  var a=0,b=0;
+  var sumEl = document.getElementById('haSum'), carryEl = document.getElementById('haCarry');
+  var btnA = document.getElementById('haToggleA'), btnB = document.getElementById('haToggleB');
+  function render(){
+    sumEl.textContent = a^b;
+    carryEl.textContent = a&b;
+  }
+  btnA.onclick = function(){ a=1-a; btnA.textContent='A = '+a; render(); };
+  btnB.onclick = function(){ b=1-b; btnB.textContent='B = '+b; render(); };
+  render();
+})();
+
+/* ===================== UNIT I: Moore's law chart ===================== */
+(function(){
+  var path = document.getElementById('moorePath');
+  var d = 'M50,210 ';
+  var n = 24;
+  for(var i=1;i<=n;i++){
+    var x = 50 + 490*(i/n);
+    var t = i/n;
+    var y = 210 - 190*Math.pow(t,0.6);
+    d += 'L'+x.toFixed(1)+','+y.toFixed(1)+' ';
+  }
+  path.setAttribute('d', d);
+  var len = path.getTotalLength();
+  path.style.strokeDasharray = len;
+  path.style.strokeDashoffset = len;
+  tween(function(v){ path.style.strokeDashoffset = v; }, len, 0, 1500);
+})();
+
+/* ===================== UNIT II: interactive Bloch sphere ===================== */
+(function(){
+  var svg = document.getElementById('u2Bloch');
+  buildBlochSVG(svg);
+  var thetaSlider = document.getElementById('thetaSlider');
+  var phiSlider = document.getElementById('phiSlider');
+  var thetaVal = document.getElementById('thetaVal');
+  var phiVal = document.getElementById('phiVal');
+  var p0val = document.getElementById('p0val'), p1val = document.getElementById('p1val');
+  var p0bar = document.getElementById('p0bar'), p1bar = document.getElementById('p1bar');
+  function update(){
+    var thetaDeg = +thetaSlider.value, phiDeg = +phiSlider.value;
+    thetaVal.textContent = thetaDeg+'°';
+    phiVal.textContent = phiDeg+'°';
+    var theta = thetaDeg*Math.PI/180, phi = phiDeg*Math.PI/180;
+    var x=Math.sin(theta)*Math.cos(phi), y=Math.sin(theta)*Math.sin(phi), z=Math.cos(theta);
+    setBlochVector(svg,x,y,z);
+    var p0=(1+z)/2, p1=(1-z)/2;
+    p0val.textContent = p0.toFixed(2);
+    p1val.textContent = p1.toFixed(2);
+    p0bar.style.height = Math.max(2,p0*100)+'%';
+    p1bar.style.height = Math.max(2,p1*100)+'%';
+  }
+  thetaSlider.oninput = update;
+  phiSlider.oninput = update;
+  update();
+})();
+
+/* ===================== UNIT II: entanglement demo ===================== */
+(function(){
+  var svgA = document.getElementById('entA'), svgB = document.getElementById('entB');
+  buildBlochSVG(svgA); buildBlochSVG(svgB);
+  var EQUATOR = {x:1,y:0,z:0};
+  var cur = {x:1,y:0,z:0};
+  setBlochVector(svgA,1,0,0); setBlochVector(svgB,1,0,0);
+  var resultEl = document.getElementById('entResult');
+  document.getElementById('entMeasureBtn').onclick = function(){
+    var outcome = Math.random()<0.5 ? 0 : 1;
+    var target = outcome===0 ? {x:0,y:0,z:1} : {x:0,y:0,z:-1};
+    animateBloch(svgA, cur, target, 500);
+    animateBloch(svgB, cur, target, 500, function(){ cur = target; });
+    resultEl.textContent = 'Both measured: ' + outcome + ' — perfectly correlated, despite no signal passing between them.';
+  };
+  document.getElementById('entResetBtn').onclick = function(){
+    animateBloch(svgA, cur, EQUATOR, 400);
+    animateBloch(svgB, cur, EQUATOR, 400, function(){ cur = {x:1,y:0,z:0}; });
+    resultEl.textContent = 'Both qubits are in superposition — undetermined until measured.';
+  };
+})();
+
+/* ===================== UNIT II: wave interference ===================== */
+(function(){
+  var svg = document.getElementById('waveSvg');
+  var fringeHTML = '';
+  for(var x=0;x<600;x+=8){
+    var inten = Math.pow(Math.cos(x*0.07/2),2);
+    fringeHTML += '<rect x="'+x+'" y="158" width="7" height="26" fill="rgba(233,237,251,'+inten.toFixed(2)+')"></rect>';
+  }
+  svg.innerHTML =
+    '<text x="10" y="20" font-family="IBM Plex Mono" font-size="10" fill="#5d6690">two coherent waves, slightly different path lengths...</text>' +
+    '<path id="wave1" stroke="#4fe0e8" stroke-width="1.5" fill="none" opacity="0.65"></path>' +
+    '<path id="wave2" stroke="#ff5da6" stroke-width="1.5" fill="none" opacity="0.65"></path>' +
+    '<line x1="0" y1="100" x2="600" y2="100" stroke="#1b2244"></line>' +
+    fringeHTML +
+    '<text x="10" y="200" font-family="IBM Plex Mono" font-size="10" fill="#5d6690">...interfere into bright / dark fringes on the screen</text>';
+  var w1 = document.getElementById('wave1'), w2 = document.getElementById('wave2');
+  var t = 0;
+  function frame(){
+    t += 0.045;
+    var d1='M0,100', d2='M0,100';
+    for(var x=0;x<=600;x+=8){
+      var k=0.045;
+      var y1 = 100 + 18*Math.sin(k*x - t);
+      var y2 = 100 + 18*Math.sin(k*x - t + 0.5);
+      d1 += ' L'+x+','+y1.toFixed(1);
+      d2 += ' L'+x+','+y2.toFixed(1);
+    }
+    w1.setAttribute('d', d1);
+    w2.setAttribute('d', d2);
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
+/* ===================== UNIT II: multi-qubit state space ===================== */
+(function(){
+  var slider = document.getElementById('nqSlider');
+  var nqVal = document.getElementById('nqVal');
+  var nqAmp = document.getElementById('nqAmp');
+  var nqBar = document.getElementById('nqBar');
+  function fmt(n){
+    var v = Math.pow(2,n);
+    if(v < 100000) return v.toLocaleString();
+    return v.toExponential(2);
+  }
+  function update(){
+    var n = +slider.value;
+    nqVal.textContent = n;
+    nqAmp.innerHTML = '2<sup>'+n+'</sup> = ' + fmt(n) + ' amplitudes';
+    var h = Math.min(100, (n/50)*100);
+    nqBar.style.height = Math.max(2,h)+'%';
+    nqBar.style.background = n>40 ? 'linear-gradient(180deg, var(--magenta), var(--magenta-dim))' : '';
+    nqAmp.style.color = n>40 ? 'var(--magenta)' : 'var(--cyan)';
+  }
+  slider.oninput = update;
+  update();
+})();
+
+/* ===================== UNIT III: gate cards ===================== */
+(function(){
+  var INIT = {S:{x:1,y:0,z:0}, T:{x:1,y:0,z:0}};
+  document.querySelectorAll('.gate-card').forEach(function(card){
+    var gate = card.dataset.gate;
+    var svg = card.querySelector('.mini-bloch');
+    buildBlochSVG(svg);
+    var start = INIT[gate] || {x:0,y:0,z:1};
+    var state = {x:start.x,y:start.y,z:start.z};
+    setBlochVector(svg,state.x,state.y,state.z);
+    card.querySelector('.apply-gate').onclick = function(){
+      var next = GATES[gate](state);
+      animateBloch(svg, state, next, 500, function(){ state = next; });
+    };
+    card.querySelector('.reset-gate').onclick = function(){
+      var next = {x:start.x,y:start.y,z:start.z};
+      animateBloch(svg, state, next, 400, function(){ state = next; });
+    };
+  });
+})();
+
+/* ===================== UNIT III: CNOT ===================== */
+(function(){
+  var svg = document.getElementById('cnotSvg');
+  function build(controlVal){
+    var targetVal = controlVal ? 1 : 0;
+    svg.innerHTML =
+      '<line x1="20" y1="40" x2="440" y2="40" stroke="#28315c"></line>' +
+      '<line x1="20" y1="100" x2="440" y2="100" stroke="#28315c"></line>' +
+      '<text x="0" y="44" font-family="IBM Plex Mono" font-size="11" fill="#8c96be">control</text>' +
+      '<text x="0" y="104" font-family="IBM Plex Mono" font-size="11" fill="#8c96be">target</text>' +
+      '<circle cx="130" cy="40" r="16" fill="'+(controlVal? '#4fe0e8':'#121833')+'" stroke="#4fe0e8" stroke-width="2"></circle>' +
+      '<text x="130" y="45" text-anchor="middle" font-family="IBM Plex Mono" font-size="13" fill="'+(controlVal?'#0a0e1a':'#4fe0e8')+'">'+controlVal+'</text>' +
+      '<circle cx="250" cy="40" r="6" fill="#ffc857"></circle>' +
+      '<line x1="250" y1="40" x2="250" y2="100" stroke="#ffc857" stroke-width="2"></line>' +
+      '<circle cx="250" cy="100" r="14" fill="none" stroke="#ffc857" stroke-width="2"></circle>' +
+      '<line x1="242" y1="100" x2="258" y2="100" stroke="#ffc857" stroke-width="2"></line>' +
+      '<line x1="250" y1="92" x2="250" y2="108" stroke="#ffc857" stroke-width="2"></line>' +
+      '<circle cx="350" cy="100" r="16" fill="'+(targetVal? '#ff5da6':'#121833')+'" stroke="#ff5da6" stroke-width="2"></circle>' +
+      '<text x="350" y="105" text-anchor="middle" font-family="IBM Plex Mono" font-size="13" fill="'+(targetVal?'#0a0e1a':'#ff5da6')+'">'+targetVal+'</text>';
+  }
+  var control = 0;
+  build(0);
+  document.getElementById('cnotToggle').onclick = function(){ control = 1-control; build(control); };
+})();
+
+/* ===================== UNIT III: Toffoli (CCX) ===================== */
+(function(){
+  var svg = document.getElementById('toffoliSvg');
+  function build(a,b){
+    var t = (a && b) ? 1 : 0;
+    svg.innerHTML =
+      '<line x1="20" y1="35" x2="440" y2="35" stroke="#28315c"></line>' +
+      '<line x1="20" y1="95" x2="440" y2="95" stroke="#28315c"></line>' +
+      '<line x1="20" y1="155" x2="440" y2="155" stroke="#28315c"></line>' +
+      '<text x="0" y="39" font-family="IBM Plex Mono" font-size="11" fill="#8c96be">ctrl A</text>' +
+      '<text x="0" y="99" font-family="IBM Plex Mono" font-size="11" fill="#8c96be">ctrl B</text>' +
+      '<text x="0" y="159" font-family="IBM Plex Mono" font-size="11" fill="#8c96be">target</text>' +
+      '<circle cx="130" cy="35" r="15" fill="'+(a? '#4fe0e8':'#121833')+'" stroke="#4fe0e8" stroke-width="2"></circle>' +
+      '<text x="130" y="40" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="'+(a?'#0a0e1a':'#4fe0e8')+'">'+(a?1:0)+'</text>' +
+      '<circle cx="130" cy="95" r="15" fill="'+(b? '#4fe0e8':'#121833')+'" stroke="#4fe0e8" stroke-width="2"></circle>' +
+      '<text x="130" y="100" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="'+(b?'#0a0e1a':'#4fe0e8')+'">'+(b?1:0)+'</text>' +
+      '<circle cx="280" cy="35" r="6" fill="#ffc857"></circle>' +
+      '<circle cx="280" cy="95" r="6" fill="#ffc857"></circle>' +
+      '<line x1="280" y1="35" x2="280" y2="155" stroke="#ffc857" stroke-width="2"></line>' +
+      '<circle cx="280" cy="155" r="14" fill="none" stroke="#ffc857" stroke-width="2"></circle>' +
+      '<line x1="272" y1="155" x2="288" y2="155" stroke="#ffc857" stroke-width="2"></line>' +
+      '<line x1="280" y1="147" x2="280" y2="163" stroke="#ffc857" stroke-width="2"></line>' +
+      '<circle cx="380" cy="155" r="15" fill="'+(t? '#ff5da6':'#121833')+'" stroke="#ff5da6" stroke-width="2"></circle>' +
+      '<text x="380" y="160" text-anchor="middle" font-family="IBM Plex Mono" font-size="12" fill="'+(t?'#0a0e1a':'#ff5da6')+'">'+t+'</text>';
+  }
+  var a=0,b=0;
+  build(0,0);
+  document.getElementById('toffoliToggleA').onclick = function(){ a=1-a; build(a,b); };
+  document.getElementById('toffoliToggleB').onclick = function(){ b=1-b; build(a,b); };
+})();
+
+/* ===================== UNIT III: measurement / shots ===================== */
+(function(){
+  var tally = [0,0];
+  var b0 = document.getElementById('shot0bar'), b1 = document.getElementById('shot1bar');
+  var v0 = document.getElementById('shot0val'), v1 = document.getElementById('shot1val');
+  function render(){
+    var total = tally[0]+tally[1];
+    b0.style.height = Math.max(2, total? tally[0]/total*100 : 2) + '%';
+    b1.style.height = Math.max(2, total? tally[1]/total*100 : 2) + '%';
+    v0.textContent = tally[0]; v1.textContent = tally[1];
+  }
+  document.getElementById('measureOnceBtn').onclick = function(){ tally[Math.random()<0.5?0:1]++; render(); };
+  document.getElementById('measure100Btn').onclick = function(){ for(var i=0;i<100;i++) tally[Math.random()<0.5?0:1]++; render(); };
+  document.getElementById('measureResetBtn').onclick = function(){ tally=[0,0]; render(); };
+  render();
+})();
+
+/* ===================== UNIT IV: bit-flip error correction ===================== */
+(function(){
+  var bits = [1,1,1];
+  var els = document.querySelectorAll('#qecBits .qecbit');
+  var status = document.getElementById('qecStatus');
+  function render(){
+    els.forEach(function(el,i){ el.textContent = bits[i]; });
+  }
+  document.getElementById('qecErrorBtn').onclick = function(){
+    var i = Math.floor(Math.random()*3);
+    bits[i] = 1-bits[i];
+    render();
+    status.textContent = 'Noise flipped physical qubit '+(i+1)+' — logical value is still recoverable.';
+  };
+  document.getElementById('qecCorrectBtn').onclick = function(){
+    var ones = bits.filter(function(b){return b===1;}).length;
+    var majority = ones>=2 ? 1 : 0;
+    bits = [majority,majority,majority];
+    render();
+    status.textContent = 'Majority vote recovered logical |'+majority+majority+majority+'⟩ — error corrected without ever reading the logical qubit directly.';
+  };
+  document.getElementById('qecResetBtn').onclick = function(){
+    bits=[1,1,1]; render();
+    status.textContent = 'Encoded: |111⟩ — no error yet.';
+  };
+  render();
+})();
+
+/* ===================== UNIT V: BB84 ===================== */
+(function(){
+  var table = document.getElementById('bb84Table');
+  document.getElementById('bb84Btn').onclick = function(){
+    table.querySelectorAll('tr.show').forEach(function(r){ r.remove(); });
+    for(var i=1;i<=6;i++){
+      (function(i){
+        var bit = Math.round(Math.random());
+        var aBasis = Math.random()<0.5 ? '+' : '×';
+        var bBasis = Math.random()<0.5 ? '+' : '×';
+        var match = aBasis===bBasis;
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td>'+i+'</td><td>'+bit+'</td><td>'+aBasis+'</td><td>'+bBasis+'</td><td>'+(match?'Yes':'No')+'</td><td class="'+(match?'keep':'')+'">'+(match? 'Kept: '+bit : 'Discarded')+'</td>';
+        table.appendChild(tr);
+        setTimeout(function(){ tr.classList.add('show'); }, i*150);
+      })(i);
+    }
+  };
+})();
+
+/* ===================== UNIT V: Grover's algorithm ===================== */
+(function(){
+  var amps = [0.5,0.5,0.5,0.5];
+  var step = 0;
+  var stepEl = document.getElementById('groverStep');
+  var btn = document.getElementById('groverBtn');
+  function render(){
+    for(var i=0;i<4;i++){
+      var bar = document.getElementById('gb'+i), val = document.getElementById('gv'+i);
+      var a = amps[i];
+      var h = Math.abs(a)*100;
+      bar.style.height = Math.max(2,h) + '%';
+      bar.classList.toggle('neg', a<0);
+      bar.classList.toggle('hit', i===2 && Math.abs(a)>0.9);
+      val.textContent = a.toFixed(2);
+    }
+  }
+  btn.onclick = function(){
+    if(step===0){
+      amps[2] = -amps[2];
+      step = 1;
+      stepEl.textContent = 'Step 1 of 2 — the oracle flips the phase of the marked item (now negative).';
+    } else if(step===1){
+      var mean = (amps[0]+amps[1]+amps[2]+amps[3])/4;
+      amps = amps.map(function(a){ return 2*mean-a; });
+      step = 2;
+      stepEl.textContent = 'Step 2 of 2 — diffusion reflects every amplitude about the mean. The marked item now has amplitude 1 — certainty.';
+      btn.disabled = true;
+    }
+    render();
+  };
+  document.getElementById('groverResetBtn').onclick = function(){
+    amps = [0.5,0.5,0.5,0.5]; step = 0; btn.disabled = false;
+    stepEl.textContent = 'Step 0 of 2 — equal superposition (magenta = negative amplitude, i.e. a phase flip).';
+    render();
+  };
+  render();
+})();
+
+/* ===================== UNIT V: Shor's algorithm (period finding) ===================== */
+(function(){
+  var seq = [1,2,4,8,1,2,4,8];
+  var idx = -1;
+  var cap = document.getElementById('shorCap');
+  function render(){
+    for(var i=0;i<8;i++){
+      var bar = document.getElementById('sb'+i), val = document.getElementById('sv'+i);
+      if(i<=idx){
+        var v = seq[i];
+        val.textContent = v;
+        bar.style.height = Math.max(4,(v/16)*100) + '%';
+        bar.classList.toggle('hit', i>=4);
+      } else {
+        val.textContent = '–'; bar.style.height = '2%'; bar.classList.remove('hit');
+      }
+    }
+  }
+  document.getElementById('shorBtn').onclick = function(){
+    if(idx<7){
+      idx++; render();
+      if(idx===7) cap.textContent = 'Notice x=4..7 repeat x=0..3 exactly — period r=4. The QFT turns this hidden repetition into sharp peaks at spacing N/r.';
+    }
+  };
+  document.getElementById('shorResetBtn').onclick = function(){
+    idx=-1; render();
+    cap.textContent = 'Values repeat every r=4 steps — that repetition is the period the QFT extracts.';
+  };
+  render();
+})();
+
+/* ===================== REVIEW: flashcards ===================== */
+(function(){
+  var GLOSSARY = [
+    ["Qubit","The basic unit of quantum information; a two-level system that can exist in superposition."],
+    ["Superposition","A state that is a combination of |0\u27E9 and |1\u27E9, with definite complex amplitudes for each."],
+    ["Entanglement","A correlation between qubits so strong they cannot be described independently of each other."],
+    ["Decoherence","The loss of a qubit's quantum behaviour through unwanted interaction with its environment."],
+    ["Bloch Sphere","A geometric picture of every possible state of a single qubit as a point on a sphere."],
+    ["Quantum Gate","An operation that rotates a qubit's state — the quantum analogue of a classical logic gate."],
+    ["Oracle","A circuit used inside an algorithm, such as Grover's, to mark the answer by flipping its phase."],
+    ["Amplitude","A complex number attached to an outcome; its squared magnitude gives that outcome's probability."],
+    ["Measurement","Reading a qubit, which collapses its superposition into a single classical outcome."],
+    ["Coherence Time","How long a qubit can hold its quantum state before decoherence sets in."],
+    ["NISQ","Noisy Intermediate-Scale Quantum — today's era of real but small, error-prone quantum computers."],
+    ["Quantum Fourier Transform","The quantum analogue of the discrete Fourier transform; extracts periodicity, central to Shor's algorithm."],
+    ["Tensor Product","The mathematical operation that combines individual qubit states into one joint multi-qubit state."],
+    ["No-Cloning Theorem","The fact that an arbitrary unknown quantum state cannot be copied exactly — a cornerstone of quantum cryptography."],
+    ["Toffoli Gate (CCX)","A two-control, one-target gate that flips the target only if both controls are |1\u27E9; reversible AND logic."],
+    ["Quantum Error Correction","Spreading one logical qubit across several physical qubits so errors can be detected and fixed without measuring the protected information directly."],
+    ["DiVincenzo's Criteria","The widely-used set of conditions a physical system must satisfy to serve as a practical quantum computer."],
+    ["Quantum Volume","A single benchmark number summarising a real device's qubit count, connectivity, and error rates together."],
+    ["Quantum Teleportation","Transferring a qubit's exact state to a distant location using a shared entangled pair and two classical bits."],
+    ["VQE","Variational Quantum Eigensolver — a hybrid algorithm combining a quantum circuit and classical optimiser to estimate a molecule's ground-state energy."],
+    ["QAOA","Quantum Approximate Optimization Algorithm — alternates cost and mixer layers to search for good solutions to optimisation problems."],
+    ["Ancilla Qubit","An extra helper qubit used temporarily during a computation, e.g. for error syndromes, rather than holding the final answer."]
+  ];
+  var grid = document.getElementById('flashGrid');
+  GLOSSARY.forEach(function(pair){
+    var card = document.createElement('div');
+    card.className = 'flip-card';
+    card.innerHTML = '<div class="flip-inner"><div class="flip-face flip-front">'+pair[0]+'</div><div class="flip-face flip-back">'+pair[1]+'</div></div>';
+    card.onclick = function(){ card.classList.toggle('flipped'); };
+    grid.appendChild(card);
+  });
+})();
+
+/* ===================== COPY BUTTONS ===================== */
+document.querySelectorAll('.copy-btn').forEach(function(btn){
+  btn.onclick = function(){
+    var pre = btn.closest('.code-block').querySelector('pre');
+    var text = pre.textContent;
+    var orig = btn.textContent;
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){
+        btn.textContent = 'Copied!';
+        setTimeout(function(){ btn.textContent = orig; }, 1400);
+      }).catch(function(){
+        btn.textContent = 'Press Ctrl+C';
+        setTimeout(function(){ btn.textContent = orig; }, 1400);
+      });
+    }
+  };
+});
+
+/* ===================== NAV: scrollspy, progress, mobile ===================== */
+(function(){
+  var sections = document.querySelectorAll('section[id]');
+  var navLinks = document.querySelectorAll('nav.sidebar a, .mobile-tabs a');
+  function setActive(id){
+    navLinks.forEach(function(a){ a.classList.toggle('active', a.dataset.sec===id); });
+  }
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting) setActive(e.target.id); });
+  }, {rootMargin:'-35% 0px -55% 0px', threshold:0});
+  sections.forEach(function(s){ obs.observe(s); });
+
+  window.addEventListener('scroll', function(){
+    var h = document.documentElement;
+    var pct = h.scrollTop / (h.scrollHeight - h.clientHeight) * 100;
+    document.getElementById('progress').style.width = pct + '%';
+  }, {passive:true});
+
+  document.getElementById('navToggle').onclick = function(){
+    window.scrollTo({top:0, behavior:'smooth'});
+  };
+})();
+</script>
+</body>
+</html>

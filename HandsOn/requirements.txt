@@ -1,0 +1,17 @@
+# Tested package versions for the updated notebooks.
+# These are minimum versions – newer ones should also work.
+qiskit>=2.0
+qiskit-aer>=0.16
+qiskit-ibm-runtime>=0.40
+qiskit-algorithms>=0.4
+
+# For circuit drawing and plotting
+matplotlib>=3.7
+pylatexenc>=2.10
+
+# Used by the QX09 PhaseOracle (Boolean expression parser)
+sympy>=1.12
+
+# Jupyter (only if you don't already have it)
+notebook>=7.0
+ipykernel>=6.0
