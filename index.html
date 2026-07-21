@@ -5,6 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quantum Technology — 23OPH971 Study Notes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<!-- MathJax Configuration and Script for LaTeX rendering -->
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']]
+    }
+  };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -196,6 +206,7 @@ input[type=range]::-moz-range-thumb{width:15px; height:15px; border-radius:50%; 
 .gate-card h4{font-size:.95rem; margin-bottom:.2rem;}
 .gate-card .desc{font-size:.82rem; color:var(--muted); min-height:3.2em;}
 .qecbit{width:46px;height:46px;border-radius:8px;border:1px solid var(--line-soft);background:var(--panel);display:flex;align-items:center;justify-content:center;font-family:var(--font-m);font-size:1.2rem;color:var(--cyan);}
+.matrix{font-family:var(--font-m); font-size:.85rem; color:var(--cyan); text-align:center;}
 
 /* ============ BAR CHARTS ============ */
 .barchart{display:flex; align-items:flex-end; gap:.8rem; height:140px; padding:0 .5rem; border-bottom:1px solid var(--line-soft);}
@@ -427,7 +438,7 @@ footer a{color:var(--muted);}
       <div class="panel">
         <p>A classical bit is 0 <i>or</i> 1. A <b>qubit</b> is described by a state</p>
         <p style="font-family:var(--font-m); font-size:1.1rem; color:var(--cyan); text-align:center; margin:1rem 0;">|ψ⟩ = α|0⟩ + β|1⟩</p>
-        <p class="muted">where α and β are complex numbers called <b>amplitudes</b>, satisfying |α|² + |β|² = 1. Squaring an amplitude gives the <i>probability</i> of measuring that outcome — |α|² is the chance of getting 0, |β|² the chance of getting 1.</p>
+        <p class="muted">where α and β are <b>complex numbers</b> ($\alpha, \beta \in \mathbb{C}$) called <b>amplitudes</b>, satisfying $|α|^2 + |β|^2 = 1$. Standard spherical parametrization defines $\alpha = \cos(\theta/2)$ and $\beta = e^{i\phi}\sin(\theta/2)$. Squaring an amplitude magnitude gives the <i>probability</i> of measuring that outcome — $|α|^2$ is the chance of getting 0, $|β|^2$ the chance of getting 1.</p>
         <p class="muted">Drag the sliders on the right to place the qubit anywhere on the Bloch sphere, and watch the measurement probabilities update.</p>
       </div>
       <div class="panel">
@@ -463,7 +474,7 @@ state = Statevector.from_instruction(qc)
   <div class="block">
     <h3 class="subhead"><span class="tag">02</span> Superposition, Properly Understood</h3>
     <div class="panel">
-      <p class="muted">A common but misleading metaphor is "a coin spinning in the air, both heads and tails at once." A qubit in superposition isn't secretly flickering between 0 and 1 — it has one single, definite, well-defined state that simply isn't 0 or 1. It only becomes 0 <i>or</i> 1 the moment you measure it. Before that, the amplitudes α and β are both real, both present, and both used by the computation.</p>
+      <p class="muted">A common but misleading metaphor is "a coin spinning in the air, both heads and tails at once." A qubit in superposition isn't secretly flickering between 0 and 1 — it has one single, definite, well-defined state vector in Hilbert space that simply isn't purely |0⟩ or |1⟩. It only becomes 0 <i>or</i> 1 the moment you measure it. Before that, the complex amplitudes α and β are both present, carrying phase information ($e^{i\phi}$) used directly by quantum algorithms to perform interference.</p>
     </div>
   </div>
 
@@ -517,16 +528,16 @@ state = Statevector.from_instruction(qc)
       </div>
       <div class="panel">
         <h4 style="font-size:1rem;">The No-Cloning Theorem</h4>
-        <p class="muted">You cannot build a machine that copies an arbitrary unknown quantum state perfectly — doing so would violate the linearity of quantum mechanics. This isn't an engineering limitation; it's a theorem.</p>
+        <p class="muted">You cannot build a machine that copies an arbitrary unknown quantum state perfectly — doing so would violate the linearity of quantum mechanics ($U^\dagger U = I$). This isn't an engineering limitation; it's a theorem.</p>
         <p class="muted">It's also why quantum cryptography (Unit V) works at all: an eavesdropper can't just "photocopy" a qubit in transit and measure the copy later without disturbing the original.</p>
         <h4 style="font-size:1rem; margin-top:1.2rem;">Tensor Products, Concretely</h4>
         <p class="muted" style="font-family:var(--font-m); font-size:.82rem;">|0⟩⊗|0⟩ = |00⟩ &nbsp;|0⟩⊗|1⟩ = |01⟩<br>|1⟩⊗|0⟩ = |10⟩ &nbsp;|1⟩⊗|1⟩ = |11⟩</p>
-        <p class="muted">Two qubits in superposition combine into a 4-dimensional space, not just 2+2 — this is where quantum computing's "exponential workspace" actually comes from.</p>
+        <p class="muted">Two qubits in superposition combine into a 4-dimensional Hilbert space ($\mathbb{C}^2 \otimes \mathbb{C}^2 = \mathbb{C}^4$), not just 2+2 — this is where quantum computing's "exponential workspace" actually comes from.</p>
       </div>
     </div>
     <div class="panel" style="margin-top:1rem;">
       <h4 style="font-size:1rem;">Why an unknown state cannot be copied</h4>
-      <p class="muted">Suppose a perfect copying operation U could copy both basis states: U|0⟩|0⟩=|0⟩|0⟩ and U|1⟩|0⟩=|1⟩|1⟩. Quantum operations are linear, so applying the same operation to |+⟩=(|0⟩+|1⟩)/√2 must give:</p>
+      <p class="muted">Suppose a perfect copying unitary operation U could copy both basis states: U|0⟩|0⟩=|0⟩|0⟩ and U|1⟩|0⟩=|1⟩|1⟩. Quantum operations are linear, so applying the same operation to |+⟩=(|0⟩+|1⟩)/√2 must give:</p>
       <div class="matrix" style="margin:.75rem 0;">U|+⟩|0⟩ = (|00⟩+|11⟩)/√2</div>
       <p class="muted">But two genuine copies would be |+⟩|+⟩=(|00⟩+|01⟩+|10⟩+|11⟩)/2. The results differ. CNOT copies a basis value but entangles a superposition. The restriction applies to an arbitrary unknown state; orthogonal states can still be distinguished and copied.</p>
     </div>
@@ -574,7 +585,7 @@ two_copies = plus.tensor(plus)
       <h2>Quantum Gates &amp; Circuits</h2>
     </div>
   </div>
-  <p class="unit-intro">Gates are how we steer a qubit's state around the Bloch sphere. Click "Apply" on each card below and watch the vector actually move.</p>
+  <p class="unit-intro">Gates are unitary operators ($U^\dagger U = I$) that steer a qubit's state around the Bloch sphere. Click "Apply" on each card below and watch the vector actually move.</p>
 
   <div class="block">
     <h3 class="subhead"><span class="tag">01</span> The Single-Qubit Gate Set</h3>
@@ -582,7 +593,7 @@ two_copies = plus.tensor(plus)
       <div class="gate-card" data-gate="X">
         <div class="gate-sym">X</div>
         <h4>Pauli-X</h4>
-        <div class="matrix">[[0,1],[1,0]]</div>
+        <div class="matrix">$$\begin{pmatrix}0&1\\1&0\end{pmatrix}$$</div>
         <p class="desc">The quantum "NOT" — flips |0⟩↔|1⟩. Rotates the Bloch vector 180° about the x-axis.</p>
         <svg class="mini-bloch" viewBox="0 0 200 200" width="120" height="120"></svg>
         <div class="btn-row" style="justify-content:center;"><button class="btn apply-gate">Apply</button><button class="btn ghost reset-gate">Reset</button></div>
@@ -590,7 +601,7 @@ two_copies = plus.tensor(plus)
       <div class="gate-card" data-gate="Y">
         <div class="gate-sym">Y</div>
         <h4>Pauli-Y</h4>
-        <div class="matrix">[[0,-i],[i,0]]</div>
+        <div class="matrix">$$\begin{pmatrix}0&-i\\i&0\end{pmatrix}$$</div>
         <p class="desc">Flips |0⟩↔|1⟩ with a phase twist. Rotates the Bloch vector 180° about the y-axis.</p>
         <svg class="mini-bloch" viewBox="0 0 200 200" width="120" height="120"></svg>
         <div class="btn-row" style="justify-content:center;"><button class="btn apply-gate">Apply</button><button class="btn ghost reset-gate">Reset</button></div>
@@ -598,7 +609,7 @@ two_copies = plus.tensor(plus)
       <div class="gate-card" data-gate="Z">
         <div class="gate-sym">Z</div>
         <h4>Pauli-Z</h4>
-        <div class="matrix">[[1,0],[0,-1]]</div>
+        <div class="matrix">$$\begin{pmatrix}1&0\\0&-1\end{pmatrix}$$</div>
         <p class="desc">Leaves |0⟩,|1⟩ alone but flips the phase of |1⟩. Rotates the Bloch vector 180° about the z-axis.</p>
         <svg class="mini-bloch" viewBox="0 0 200 200" width="120" height="120"></svg>
         <div class="btn-row" style="justify-content:center;"><button class="btn apply-gate">Apply</button><button class="btn ghost reset-gate">Reset</button></div>
@@ -606,7 +617,7 @@ two_copies = plus.tensor(plus)
       <div class="gate-card" data-gate="H">
         <div class="gate-sym">H</div>
         <h4>Hadamard</h4>
-        <div class="matrix">1/√2 [[1,1],[1,-1]]</div>
+        <div class="matrix">$$\frac{1}{\sqrt{2}}\begin{pmatrix}1&1\\1&-1\end{pmatrix}$$</div>
         <p class="desc">The superposition-maker. Sends |0⟩ to the equator, halfway between |0⟩ and |1⟩.</p>
         <svg class="mini-bloch" viewBox="0 0 200 200" width="120" height="120"></svg>
         <div class="btn-row" style="justify-content:center;"><button class="btn apply-gate">Apply</button><button class="btn ghost reset-gate">Reset</button></div>
@@ -638,7 +649,7 @@ state = Statevector.from_instruction(qc)
       <div class="gate-card" data-gate="S">
         <div class="gate-sym">S</div>
         <h4>S Gate (Phase)</h4>
-        <div class="matrix">[[1,0],[0,i]]</div>
+        <div class="matrix">$$\begin{pmatrix}1&0\\0&i\end{pmatrix}$$</div>
         <p class="desc">Rotates the phase by 90° (π/2) around the z-axis. Applying it twice equals a Z gate.</p>
         <svg class="mini-bloch" viewBox="0 0 200 200" width="120" height="120"></svg>
         <div class="btn-row" style="justify-content:center;"><button class="btn apply-gate">Apply</button><button class="btn ghost reset-gate">Reset</button></div>
@@ -646,7 +657,7 @@ state = Statevector.from_instruction(qc)
       <div class="gate-card" data-gate="T">
         <div class="gate-sym">T</div>
         <h4>T Gate (π/8)</h4>
-        <div class="matrix">[[1,0],[0,e<sup>iπ/4</sup>]]</div>
+        <div class="matrix">$$\begin{pmatrix}1&0\\0&e^{i\pi/4}\end{pmatrix}$$</div>
         <p class="desc">Rotates the phase by 45° (π/4) around the z-axis. Applying it twice equals an S gate.</p>
         <svg class="mini-bloch" viewBox="0 0 200 200" width="120" height="120"></svg>
         <div class="btn-row" style="justify-content:center;"><button class="btn apply-gate">Apply</button><button class="btn ghost reset-gate">Reset</button></div>
@@ -669,7 +680,7 @@ state = Statevector.from_instruction(qc)
 
   <div class="block">
     <h3 class="subhead"><span class="tag">03</span> CNOT — A Two-Qubit Gate</h3>
-    <p class="muted">CNOT (controlled-X) acts on two qubits: a <b>control</b> and a <b>target</b>. If the control is |1⟩, the target is flipped; if the control is |0⟩, nothing happens. Toggle the control qubit below.</p>
+    <p class="muted">CNOT (controlled-X) acts on two qubits: a <b>control</b> and a <b>target</b>. Represented as a $4 \times 4$ unitary matrix: $$\text{CNOT} = \begin{pmatrix}1&0&0&0\\0&1&0&0\\0&0&0&1\\0&0&1&0\end{pmatrix}$$ If the control is |1⟩, the target is flipped; if the control is |0⟩, nothing happens. Toggle the control qubit below.</p>
 
     <div class="panel" style="margin-top:1rem;">
       <h4 style="margin-bottom:.65rem;">Prerequisite theory, in simple language</h4>
@@ -761,7 +772,7 @@ plot_histogram(counts)   <span class="tok-com"># expect ~50% '00' and ~50% '11',
 
   <div class="block">
     <h3 class="subhead"><span class="tag">04</span> The Toffoli Gate (CCX) — A Universal Building Block</h3>
-    <p class="muted">The Toffoli gate has <i>two</i> controls and one target: the target flips only if <b>both</b> controls are |1⟩ — it's a quantum AND gate wired into a reversible circuit. Together with single-qubit gates, Toffoli is enough to build any classical logic circuit reversibly, and is a core ingredient of the arithmetic inside Shor's algorithm. Toggle the two controls below.</p>
+    <p class="muted">The Toffoli gate has <i>two</i> controls and one target: represented mathematically as an $8 \times 8$ matrix that applies $X$ to the target only if <b>both</b> controls are |1⟩ — it's a quantum AND gate wired into a reversible circuit. Together with single-qubit gates, Toffoli is enough to build any classical logic circuit reversibly, and is a core ingredient of the arithmetic inside Shor's algorithm. Toggle the two controls below.</p>
     <div class="panel">
       <svg id="toffoliSvg" viewBox="0 0 460 190" width="100%" height="190"></svg>
       <div class="btn-row"><button class="btn" id="toffoliToggleA">Toggle control A</button><button class="btn" id="toffoliToggleB">Toggle control B</button></div>
@@ -898,7 +909,7 @@ state = Statevector.from_instruction(qc)
       <ul class="bullets">
         <li><b>Well-characterized qubits</b> that can be scaled up to many copies.</li>
         <li><b>Reliable initialisation</b> — the ability to reset every qubit to a known starting state.</li>
-        <li><b>Long coherence times</b> — the qubit must hold its state much longer than a gate takes to run.</li>
+        <li><b>Long coherence times ($T_1, T_2$)</b> — the qubit must hold its state much longer than a gate takes to run.</li>
         <li><b>A universal gate set</b> — enough gate types to build any quantum algorithm.</li>
         <li><b>High-fidelity measurement</b> — reading out each qubit's final state reliably.</li>
       </ul>
@@ -932,11 +943,11 @@ state = Statevector.from_instruction(qc)
   </div>
 
   <div class="block">
-    <h3 class="subhead"><span class="tag">05</span> Decoherence, Error Correction &amp; the NISQ Era</h3>
+    <h3 class="subhead"><span class="tag">05</span> Decoherence, Error Correction &amp; Hardware Realities ($T_1, T_2$, NISQ)</h3>
     <div class="grid-2">
       <div class="panel">
-        <p class="muted">Real qubits leak information into their environment — <b>decoherence</b> — and gates are never perfectly precise. Today's machines are firmly in the <b>NISQ</b> era (Noisy Intermediate-Scale Quantum): tens to a few thousand qubits, with no full error correction yet. The five conditions in block 03 are sometimes called <b>DiVincenzo's criteria</b>, after the physicist who first listed them as requirements for a practical quantum computer.</p>
-        <p class="muted">The fix is <b>quantum error correction</b>: spread one "logical" qubit's information across several noisy "physical" qubits so that an error on any single one can be detected and reversed — without ever directly measuring (and collapsing) the protected information.</p>
+        <p class="muted">Real qubits leak energy ($T_1$ relaxation time) and lose phase coherence ($T_2$ dephasing time) due to environmental noise. Today's devices operate in the <b>NISQ</b> (Noisy Intermediate-Scale Quantum) era: 50 to a few thousand physical qubits without fault-tolerant error correction. The five baseline requirements are known as <b>DiVincenzo's criteria</b>.</p>
+        <p class="muted">The ultimate solution is <b>quantum error correction</b>: spread one "logical" qubit's state across multiple physical qubits so errors are detected via non-destructive parity checks without collapsing stored information.</p>
       </div>
       <div class="panel">
         <h4 style="font-size:1rem;">3-Qubit Bit-Flip Code — Try It</h4>
