@@ -2,6 +2,11 @@
 
 This repository contains quantum computing experiments built with Qiskit.
 
+# Notes
+
+https://hemsush.github.io/QuantumStarterKit/
+
+
 ## Windows setup (Qiskit 2.x)
 
 These instructions are for Windows PowerShell and install the versions requested:
