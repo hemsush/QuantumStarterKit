@@ -452,7 +452,7 @@ footer a{color:var(--muted);}
         <p>A classical bit is 0 <i>or</i> 1. A <b>qubit</b> is described by a state</p>
         <p style="font-family:var(--font-m); font-size:1.1rem; color:var(--cyan); text-align:center; margin:1rem 0;">|ψ⟩ = α|0⟩ + β|1⟩</p>
         <p class="muted">where α and β are complex numbers called <b>amplitudes</b>, satisfying |α|² + |β|² = 1. Squaring an amplitude gives the <i>probability</i> of measuring that outcome — |α|² is the chance of getting 0, |β|² the chance of getting 1.</p>
-        <p class="muted">Drag the sliders on the right to place the qubit anywhere on the Bloch sphere, and watch the measurement probabilities update.</p>
+      <p class="muted">Drag the sliders on the right to place the qubit anywhere on the Bloch sphere. Notice that changing φ alone does not change Z-basis probabilities: φ stores <b>relative phase</b>, which becomes observable only through interference or a change of measurement basis.</p>
       </div>
       <div class="panel">
         <svg id="u2Bloch" class="bloch-svg" viewBox="0 0 200 200" width="220" height="220"></svg>
@@ -487,13 +487,15 @@ state = Statevector.from_instruction(qc)
   <div class="block">
     <h3 class="subhead"><span class="tag">02</span> Superposition, Properly Understood</h3>
     <div class="panel">
-      <p class="muted">A common but misleading metaphor is "a coin spinning in the air, both heads and tails at once." A qubit in superposition isn't secretly flickering between 0 and 1 — it has one single, definite, well-defined state that simply isn't 0 or 1. It only becomes 0 <i>or</i> 1 the moment you measure it. Before that, the amplitudes α and β are both real, both present, and both used by the computation.</p>
+      <p class="muted">A common but misleading metaphor is "a coin spinning in the air, both heads and tails at once." A qubit in superposition isn't secretly flickering between 0 and 1—it has one definite quantum state that simply is not a computational-basis state. Before measurement, the amplitudes \(\alpha,\beta\in\mathbb C\) are <b>complex numbers</b>. Their magnitudes determine measurement probabilities, while their relative complex phase determines interference.</p>
+      <div class="mathbox"><span class="step">\[|+\rangle=\frac{|0\rangle+|1\rangle}{\sqrt2},\qquad |-\rangle=\frac{|0\rangle-|1\rangle}{\sqrt2}\]</span><span class="step">Both give \(P(0)=P(1)=\tfrac12\) in the Z basis, but \(H|+\rangle=|0\rangle\) while \(H|-\rangle=|1\rangle\). The sign is a relative phase, and the second Hadamard converts it into a measurable population difference.</span></div>
+      <div class="mathbox"><b>Matrix-first view of the essential gates</b><span class="step">\[X=\begin{bmatrix}0&1\\1&0\end{bmatrix},\quad Y=\begin{bmatrix}0&-i\\i&0\end{bmatrix},\quad Z=\begin{bmatrix}1&0\\0&-1\end{bmatrix},\quad H=\frac1{\sqrt2}\begin{bmatrix}1&1\\1&-1\end{bmatrix}\]</span><span class="step">\(X,Y,Z\) are \(\pi\)-rotations of the Bloch vector about the x, y, and z axes, up to global phase. \(Z\) changes relative phase without changing Z-basis probabilities; \(H\) mixes the basis states so that phase can become observable.</span></div>
     </div>
   </div>
 
   <div class="block">
     <h3 class="subhead"><span class="tag">03</span> Entanglement</h3>
-    <p class="muted">Two (or more) qubits can be placed in a joint state where they can no longer be described independently. Measuring one instantly tells you the outcome of the other — even though no signal travelled between them. Click below to "measure" an entangled pair.</p>
+    <p class="muted">Two or more qubits can occupy a non-separable joint state in which neither subsystem has its own independent pure-state description. For a Bell pair, measurements in the same basis show correlated outcomes. Click below to sample such a pair.</p>
     <div class="panel" style="text-align:center;">
       <div style="display:flex; justify-content:center; gap:3rem; flex-wrap:wrap;">
         <div><svg id="entA" class="bloch-svg" viewBox="0 0 200 200" width="160" height="160"></svg><div class="hero-sphere-cap">QUBIT A</div></div>
@@ -502,6 +504,7 @@ state = Statevector.from_instruction(qc)
       <p class="muted" style="margin-top:1rem; font-family:var(--font-m); font-size:.85rem;" id="entResult">Both qubits are in superposition — undetermined until measured.</p>
       <div class="btn-row" style="justify-content:center;"><button class="btn" id="entMeasureBtn">Measure the entangled pair</button><button class="btn ghost" id="entResetBtn">Reset</button></div>
     </div>
+    <div class="misconception"><b>No-communication theorem</b><p class="muted" style="margin:.45rem 0 0;">Entanglement cannot transmit a controllable message faster than light. Each observer’s local result is random; the reduced state and local probability distribution are unchanged by which measurement the distant observer chooses. The correlation becomes visible only after the observers compare results through an ordinary classical channel.</p></div>
   </div>
 
   <div class="block">
@@ -511,7 +514,7 @@ state = Statevector.from_instruction(qc)
         <tr><th>Property</th><th>Classical bit</th><th>Qubit</th></tr>
         <tr class="show"><td>Possible states</td><td>Exactly 0 or 1</td><td>Any superposition α|0⟩+β|1⟩</td></tr>
         <tr class="show"><td>Reading the value</td><td>Reveals it, unchanged</td><td>Collapses it to 0 or 1</td></tr>
-        <tr class="show"><td>Combining n of them</td><td>n bits → n states</td><td>n qubits → 2ⁿ amplitudes</td></tr>
+        <tr class="show"><td>Combining n of them</td><td>n bits store one of 2ⁿ configurations</td><td>n qubits require 2ⁿ complex amplitudes for a general pure-state description</td></tr>
         <tr class="show"><td>Can be linked?</td><td>No fundamental link</td><td>Can be entangled</td></tr>
       </table>
     </div>
@@ -529,14 +532,19 @@ state = Statevector.from_instruction(qc)
     <h3 class="subhead"><span class="tag">06</span> Multi-Qubit Systems &amp; the No-Cloning Theorem</h3>
     <div class="grid-2">
       <div class="panel">
-        <p>A single qubit needs 2 amplitudes to describe it. Put <i>n</i> qubits together and the joint state needs <b>2<sup>n</sup></b> amplitudes — one for every possible bit string of length n. Three qubits → 8 amplitudes; ten qubits → 1024; fifty qubits → more numbers than there are atoms in a grain of sand.</p>
+        <p>A single qubit needs 2 amplitudes to describe it. Put <i>n</i> qubits together and a general pure joint state needs <b>2<sup>n</sup></b> complex amplitudes—one for every possible bit string. Three qubits need 8; ten need 1024; fifty need about \(1.13\times10^{15}\). Roughly 64 qubits reach \(1.84\times10^{19}\), comparable in order of magnitude to estimates for atoms in a grain of sand; 273 qubits exceed \(10^{82}\), safely above common estimates for atoms in the observable universe.</p>
         <p style="font-family:var(--font-m); font-size:1rem; color:var(--cyan); text-align:center; margin:1rem 0;">|ψ⟩ = Σ c<sub>i</sub> |i⟩ &nbsp;&nbsp; (i = 0 … 2<sup>n</sup>−1)</p>
         <p class="muted">This is exactly what makes simulating quantum systems on a classical computer so hard — and it's the resource a quantum computer manipulates directly. Drag the slider to see how fast it grows.</p>
         <div class="slider-row" style="margin-top:1.4rem;">
           <label>Number of qubits, n <b id="nqVal">1</b></label>
-          <input type="range" id="nqSlider" min="1" max="50" value="1">
+          <input type="range" id="nqSlider" min="1" max="273" value="1">
         </div>
-        <p class="muted" style="font-family:var(--font-m); font-size:.95rem; text-align:center;" id="nqAmp">2<sup>1</sup> = 2 amplitudes</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:.5rem;">
+          <p class="muted" style="font-family:var(--font-m); font-size:.95rem; margin:0;" id="nqAmp">2<sup>1</sup> = 2 amplitudes</p>
+          <label style="font-family:var(--font-m); font-size:.72rem; color:var(--muted); cursor:pointer;">
+            <input type="checkbox" id="nqLogToggle" checked style="margin-right:.3rem;"> Log Scale Visual
+          </label>
+        </div>
         <div class="barchart" style="height:70px;"><div class="bar-col"><div class="bar" id="nqBar" style="height:2%;"></div></div></div>
       </div>
       <div class="panel">
@@ -762,7 +770,7 @@ state = Statevector.from_instruction(qc)
     <div class="code-block">
       <div class="code-head"><span>bell_state.py</span><button class="copy-btn">Copy</button></div>
       <pre><span class="tok-kw">from</span> qiskit <span class="tok-kw">import</span> QuantumCircuit
-<span class="tok-kw">from</span> qiskit_aer <span class="tok-kw">import</span> AerSimulator
+<span class="tok-kw">from</span> qiskit.primitives <span class="tok-kw">import</span> StatevectorSampler
 <span class="tok-kw">from</span> qiskit.quantum_info <span class="tok-kw">import</span> Statevector
 <span class="tok-kw">from</span> qiskit.visualization <span class="tok-kw">import</span> plot_histogram
 
@@ -777,8 +785,9 @@ state = Statevector.from_instruction(qc)
 measured = qc.copy()
 measured.measure_all()
 
-sim = AerSimulator()
-counts = sim.run(measured, shots=<span class="tok-num">1000</span>).result().get_counts()
+sampler = StatevectorSampler(seed=<span class="tok-num">7</span>)        <span class="tok-com"># V2 Sampler primitive</span>
+result = sampler.run([measured], shots=<span class="tok-num">1000</span>).result()
+counts = result[<span class="tok-num">0</span>].data.meas.get_counts()
 plot_histogram(counts)   <span class="tok-com"># expect ~50% '00' and ~50% '11', never '01' or '10'</span></pre>
     </div>
   </div>
@@ -865,7 +874,7 @@ state = Statevector.from_instruction(qc)
     <div class="code-block">
       <div class="code-head"><span>measurement_basis.py</span><button class="copy-btn">Copy</button></div>
       <pre><span class="tok-kw">from</span> qiskit <span class="tok-kw">import</span> QuantumCircuit
-<span class="tok-kw">from</span> qiskit_aer <span class="tok-kw">import</span> AerSimulator
+<span class="tok-kw">from</span> qiskit.primitives <span class="tok-kw">import</span> StatevectorSampler
 
 <span class="tok-kw">def</span> <span class="tok-fn">measure_plus</span>(basis, shots=<span class="tok-num">1000</span>):
     qc = QuantumCircuit(<span class="tok-num">1</span>, <span class="tok-num">1</span>)
@@ -873,7 +882,8 @@ state = Statevector.from_instruction(qc)
     <span class="tok-kw">if</span> basis == <span class="tok-str">"X"</span>:
         qc.h(<span class="tok-num">0</span>)          <span class="tok-com"># rotate X basis into the measurable Z basis</span>
     qc.measure(<span class="tok-num">0</span>, <span class="tok-num">0</span>)
-    <span class="tok-kw">return</span> AerSimulator().run(qc, shots=shots).result().get_counts()
+    result = StatevectorSampler(seed=<span class="tok-num">7</span>).run([qc], shots=shots).result()
+    <span class="tok-kw">return</span> result[<span class="tok-num">0</span>].data.c.get_counts()  <span class="tok-com"># classical register is named c</span>
 
 <span class="tok-fn">print</span>(<span class="tok-str">"Z-basis:"</span>, measure_plus(<span class="tok-str">"Z"</span>))  <span class="tok-com"># about 50% 0 and 50% 1</span>
 <span class="tok-fn">print</span>(<span class="tok-str">"X-basis:"</span>, measure_plus(<span class="tok-str">"X"</span>))  <span class="tok-com"># always 0 because |+> is an X eigenstate</span></pre>
@@ -959,7 +969,8 @@ state = Statevector.from_instruction(qc)
     <h3 class="subhead"><span class="tag">05</span> Decoherence, Error Correction &amp; the NISQ Era</h3>
     <div class="grid-2">
       <div class="panel">
-        <p class="muted">Real qubits leak information into their environment — <b>decoherence</b> — and gates are never perfectly precise. Today's machines are firmly in the <b>NISQ</b> era (Noisy Intermediate-Scale Quantum): tens to a few thousand qubits, with no full error correction yet. The five conditions in block 03 are sometimes called <b>DiVincenzo's criteria</b>, after the physicist who first listed them as requirements for a practical quantum computer.</p>
+        <p class="muted">Real qubits interact with their environment and control apparatus. Energy relaxation is characterized by \(T_1\); loss of phase coherence by \(T_2\). Together with imperfect gates, readout errors, and connectivity limits, these effects turn pure states into mixed states and limit useful circuit depth.</p>
+        <p class="muted">Today's machines are in the <b>NISQ</b> era: useful experimental processors with up to thousands of noisy physical qubits, but without large-scale fault-tolerant logical computation. The five conditions in block 03 are often called <b>DiVincenzo's criteria</b>.</p>
         <p class="muted">The fix is <b>quantum error correction</b>: spread one "logical" qubit's information across several noisy "physical" qubits so that an error on any single one can be detected and reversed — without ever directly measuring (and collapsing) the protected information.</p>
       </div>
       <div class="panel">
@@ -972,6 +983,7 @@ state = Statevector.from_instruction(qc)
         <div class="btn-row" style="justify-content:center;"><button class="btn" id="qecErrorBtn">Inject random error</button><button class="btn" id="qecCorrectBtn">Correct (majority vote)</button><button class="btn ghost" id="qecResetBtn">Reset</button></div>
       </div>
     </div>
+    <div class="misconception"><b>NISQ is not fault-tolerant quantum computing</b><p class="muted" style="margin:.45rem 0 0;">Small demonstrations of factoring and error correction do not imply that present hardware can run cryptographically relevant Shor circuits. Breaking RSA-2048 would require a large fault-tolerant machine: thousands of high-quality logical qubits and, depending on architecture and error rates, potentially millions of physical qubits plus substantial runtime and error-correction overhead. Resource estimates are engineering projections, not a capability of current NISQ processors.</p></div>
     <div class="panel" style="margin-top:1rem;">
       <h4 style="font-size:1rem;">Encoding, syndrome and correction</h4>
       <p class="muted">The logical state α|0⟩+β|1⟩ is encoded as α|000⟩+β|111⟩. The amplitudes are not measured. Two parity checks only reveal whether neighbouring physical qubits agree, producing a syndrome that identifies one flipped qubit.</p>
@@ -1096,7 +1108,8 @@ exact = np.linalg.eigvalsh(H.to_matrix())[<span class="tok-num">0</span>]
 
   <div class="block">
     <h3 class="subhead"><span class="tag">03</span> Grover's Algorithm — Searching with Interference</h3>
-    <p class="muted">Classically, finding one marked item among N requires checking, on average, N/2 items. Grover's algorithm finds it in roughly √N steps by using interference: an <b>oracle</b> flips the sign of the marked item's amplitude, then a <b>diffusion</b> step reflects every amplitude about the average — which boosts the marked item and suppresses the rest.</p>
+    <p class="muted">In the black-box query model, finding one marked input among \(N\) possibilities takes \(O(N)\) classical oracle queries, while Grover amplitude amplification uses \(O(\sqrt N)\) quantum oracle queries. The oracle flips the marked state’s phase and diffusion reflects amplitudes about their mean.</p>
+    <div class="misconception"><b>Oracle search ≠ free database search</b><p class="muted" style="margin:.45rem 0 0;">Grover accelerates repeated evaluation of a coherently accessible predicate \(f(x)\). If \(N\) ordinary classical records must first be loaded one by one into a quantum-addressable representation, that preparation can cost \(O(N)\) and erase the end-to-end advantage. Any practical speedup claim must include oracle construction, data access, state preparation, and readout costs.</p></div>
     <div class="panel" style="margin-bottom:1rem;">
       <h4 style="font-size:1rem;">Amplitude amplification for four possibilities</h4>
       <p class="muted">Two Hadamards assign amplitude 1/2 to each of 00, 01, 10 and 11. The oracle marks the answer by changing only its sign, from +1/2 to −1/2; probabilities are still 1/4 at this point because a sign change alone is not visible to measurement.</p>
@@ -1118,7 +1131,7 @@ exact = np.linalg.eigvalsh(H.to_matrix())[<span class="tok-num">0</span>]
     <div class="code-block">
       <div class="code-head"><span>grover_2qubit.py</span><button class="copy-btn">Copy</button></div>
       <pre><span class="tok-kw">from</span> qiskit <span class="tok-kw">import</span> QuantumCircuit
-<span class="tok-kw">from</span> qiskit_aer <span class="tok-kw">import</span> AerSimulator
+<span class="tok-kw">from</span> qiskit.primitives <span class="tok-kw">import</span> StatevectorSampler
 <span class="tok-kw">from</span> qiskit.visualization <span class="tok-kw">import</span> plot_histogram
 
 <span class="tok-com"># 2 qubits, search space {00,01,10,11}, marked state |10>
@@ -1140,8 +1153,9 @@ qc.h([<span class="tok-num">0</span>, <span class="tok-num">1</span>])
 
 qc.measure_all()
 
-sim = AerSimulator()
-counts = sim.run(qc, shots=<span class="tok-num">1000</span>).result().get_counts()
+sampler = StatevectorSampler(seed=<span class="tok-num">7</span>)        <span class="tok-com"># V2 Sampler primitive</span>
+result = sampler.run([qc], shots=<span class="tok-num">1000</span>).result()
+counts = result[<span class="tok-num">0</span>].data.meas.get_counts()
 plot_histogram(counts)   <span class="tok-com"># ~100% '10'</span></pre>
     </div>
   </div>
@@ -1149,6 +1163,7 @@ plot_histogram(counts)   <span class="tok-com"># ~100% '10'</span></pre>
   <div class="block">
     <h3 class="subhead"><span class="tag">04</span> Shor's Algorithm — Factoring via Periods (Conceptual)</h3>
     <p class="muted">Shor's algorithm factors large numbers exponentially faster than the best known classical method — the reason quantum computers threaten RSA encryption. The core trick: factoring N can be reduced to finding the <b>period</b> r of the sequence aˣ mod N, and a quantum computer can find that period efficiently using the <b>Quantum Fourier Transform (QFT)</b>.</p>
+    <div class="misconception"><b>Conceptual circuit, not present-day cryptanalysis</b><p class="muted" style="margin:.45rem 0 0;">Factoring 15 is a teaching demonstration. Cryptographically relevant factoring needs deep, fault-tolerant modular arithmetic and error-corrected logical qubits; it is far beyond current NISQ hardware.</p></div>
     <div class="panel">
       <p class="muted" style="font-size:.85rem;">Example: a=2, N=15. The sequence 2ˣ mod 15 repeats with period r=4. Click to step through it.</p>
       <div class="barchart" id="shorChart" style="height:90px;">
@@ -1641,6 +1656,7 @@ var GATES = {
   var nqVal = document.getElementById('nqVal');
   var nqAmp = document.getElementById('nqAmp');
   var nqBar = document.getElementById('nqBar');
+  var logToggle = document.getElementById('nqLogToggle');
   function fmt(n){
     var v = Math.pow(2,n);
     if(v < 100000) return v.toLocaleString();
@@ -1650,12 +1666,18 @@ var GATES = {
     var n = +slider.value;
     nqVal.textContent = n;
     nqAmp.innerHTML = '2<sup>'+n+'</sup> = ' + fmt(n) + ' amplitudes';
-    var h = Math.min(100, (n/50)*100);
-    nqBar.style.height = Math.max(2,h)+'%';
-    nqBar.style.background = n>40 ? 'linear-gradient(180deg, var(--magenta), var(--magenta-dim))' : '';
-    nqAmp.style.color = n>40 ? 'var(--magenta)' : 'var(--cyan)';
+    var h;
+    if(logToggle.checked) {
+      h = Math.min(100, (n / 273) * 100);
+    } else {
+      h = (n < 30) ? (Math.pow(2, n) / Math.pow(2, 30)) * 100 : 100;
+    }
+    nqBar.style.height = Math.max(2, h) + '%';
+    nqBar.style.background = n >= 64 ? 'linear-gradient(180deg, var(--magenta), var(--magenta-dim))' : '';
+    nqAmp.style.color = n > 40 ? 'var(--magenta)' : 'var(--cyan)';
   }
   slider.oninput = update;
+  logToggle.onchange = update;
   update();
 })();
 
